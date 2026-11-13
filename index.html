@@ -1,0 +1,1727 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --red:#C62828; --red-d:#A11F1F; --red-50:#FDECEC; --red-100:#F8D3D3;
+  --yellow:#FFD600; --yellow-50:#FFF8D9;
+  --green:#2E7D32; --green-50:#E8F5E9;
+  --amber:#A15C00; --amber-50:#FFF1DC;
+  --blue:#1D5FBF; --blue-50:#E8F0FC;
+  --violet:#5B3DB5; --violet-50:#EFEBFA;
+  --teal:#00796B; --teal-50:#E0F2F1;
+  --ink:#1D1B20; --ink-2:#54515A; --ink-3:#8B8892;
+  --line:#E6E2DA; --line-2:#F0EDE7; --bg:#F5F3EE; --card:#FFFFFF; --side:#1F1D22;
+  --radius:14px;
+  --shadow:0 1px 2px rgba(0,0,0,.04),0 4px 14px rgba(0,0,0,.04);
+  --bnav-h:62px; --bnav-off:calc(var(--bnav-h) + env(safe-area-inset-bottom));
+  --side-w:248px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans Thai',system-ui,-apple-system,sans-serif;font-size:15px;line-height:1.45}
+body.lock{overflow:hidden}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:inherit}
+svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+[hidden]{display:none!important}
+.muted{color:var(--ink-3)}
+.mono{font-variant-numeric:tabular-nums}
+
+/* ---------- Shell ---------- */
+.side{display:none}
+.main{min-width:0;padding-bottom:var(--bnav-off)}
+.top{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;padding:10px 16px;padding-top:calc(10px + env(safe-area-inset-top));min-height:60px}
+.top-logo{width:34px;height:34px;object-fit:contain}
+.top-t{flex:1;min-width:0}
+.top h1{font-size:17px;margin:0;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.crumb{font-size:12px;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top-act{display:flex;gap:6px}
+.iconbtn{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:#fff;display:grid;place-items:center;cursor:pointer;flex:none}
+.bnav{position:fixed;left:0;right:0;bottom:0;z-index:25;background:#fff;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);display:grid;grid-template-columns:repeat(3,1fr);height:var(--bnav-off)}
+.bnav button{border:none;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:12px;font-weight:600;color:var(--ink-3);cursor:pointer;height:var(--bnav-h);position:relative}
+.bnav button.on{color:var(--red)}
+.bnav svg{width:22px;height:22px}
+.bnav .lk{position:absolute;top:8px;left:calc(50% + 8px);width:14px;height:14px;opacity:.7}
+@media (min-width:960px){
+  :root{--bnav-off:0px}
+  .bnav{display:none}
+  .side{display:flex;flex-direction:column;position:fixed;inset:0 auto 0 0;width:var(--side-w);background:var(--side);color:#E9E6EF;z-index:30}
+  .main{margin-left:var(--side-w);padding-bottom:0}
+  .top-logo{display:none}
+  .top{padding:14px 28px;min-height:68px}
+  .top h1{font-size:20px}
+}
+.brand{display:flex;align-items:center;gap:10px;padding:18px 18px 14px;border-bottom:1px solid rgba(255,255,255,.08)}
+.brand img{width:40px;height:40px;object-fit:contain;background:#fff;border-radius:10px;padding:3px}
+.brand .b1{font-weight:700;font-size:16px}
+.brand .b2{font-size:12px;color:#A9A4B3}
+.snav{padding:12px 10px;flex:1;overflow:auto}
+.snav .sec{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#8E889A;margin:16px 10px 6px}
+.snav button{width:100%;display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;border:none;background:none;color:#D9D5E0;font-weight:500;cursor:pointer;text-align:left}
+.snav button:hover{background:rgba(255,255,255,.06)}
+.snav button.on{background:var(--red);color:#fff}
+.snav button .lk{margin-left:auto;opacity:.6}
+.sfoot{padding:14px;border-top:1px solid rgba(255,255,255,.08);font-size:13px}
+.sfoot .who{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.sfoot .btn{width:100%;background:transparent;color:#E9E6EF;border-color:rgba(255,255,255,.18)}
+
+/* ---------- Layout ---------- */
+.page{max-width:1200px;margin:0 auto;padding:16px}
+.page.narrow{max-width:760px}
+@media (min-width:960px){.page{padding:24px 28px}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:14px}
+.card-h{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.card-h h2,.card-h h3{display:flex;align-items:center;gap:8px;font-size:15.5px;margin:0}
+.card-h h2 svg,.card-h h3 svg{color:var(--red)}
+.card-h .sub{font-size:12px;color:var(--ink-3);font-weight:400}
+
+/* ---------- Fields ---------- */
+.fld{display:block;margin-bottom:12px;min-width:0}
+.fld>span{display:block;font-size:13px;font-weight:600;color:var(--ink-2);margin-bottom:6px}
+.fld>span b{color:var(--red)}
+.fld>span em{font-style:normal;font-weight:400;color:var(--ink-3)}
+.fld input,.fld select,.fld textarea{width:100%;font-size:16px;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:#FCFBF9;outline:none;transition:border-color .15s,box-shadow .15s}
+.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:var(--red);box-shadow:0 0 0 3px var(--red-50);background:#fff}
+.fld textarea{resize:vertical;min-height:76px}
+.fld.sm{margin-bottom:0}
+.fld.sm>span{font-size:12px;margin-bottom:4px}
+.fld.sm input,.fld.sm select{padding:8px 10px;font-size:15px}
+.fld.err input,.fld.err textarea{border-color:var(--red)!important;box-shadow:0 0 0 3px var(--red-50)}
+.check{display:flex;align-items:center;gap:12px;padding:12px;border:1.5px solid var(--line);border-radius:10px;background:#FCFBF9;cursor:pointer;font-weight:600}
+.check input{width:22px;height:22px;accent-color:var(--red)}
+
+/* ---------- Buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:9px 14px;font-weight:600;cursor:pointer;text-decoration:none;white-space:nowrap;transition:transform .08s,background .15s}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.55;cursor:default}
+.btn.primary{background:var(--red);border-color:var(--red);color:#fff}
+.btn.primary:hover{background:var(--red-d)}
+.btn.dark{background:var(--ink);border-color:var(--ink);color:#fff}
+.btn.ghost{background:transparent;border-color:transparent}
+.btn.sm{padding:7px 11px;font-size:13.5px;border-radius:9px}
+.btn.lg{padding:13px 18px;font-size:16px}
+.btn.block{width:100%}
+@media (max-width:559px){.hide-sm{display:none}}
+.actbar{position:sticky;bottom:var(--bnav-off);z-index:15;margin:4px -16px 0;padding:10px 16px;background:linear-gradient(to top,var(--bg) 70%,rgba(245,243,238,0))}
+.actbar .btn{width:100%}
+
+/* ---------- Operator ---------- */
+.lgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media (min-width:640px){.lgrid{grid-template-columns:repeat(3,1fr)}}
+@media (min-width:1100px){.lgrid{grid-template-columns:repeat(4,1fr)}}
+.lcard{display:flex;align-items:center;gap:10px;text-align:left;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;cursor:pointer;box-shadow:var(--shadow);min-height:64px;transition:border-color .15s,transform .1s}
+.lcard:hover{border-color:var(--red-100);transform:translateY(-1px)}
+.lcard .ico{width:38px;height:38px;border-radius:10px;background:var(--red-50);color:var(--red);display:grid;place-items:center;flex:none}
+.lcard b{display:block;font-size:15px;line-height:1.3}
+.lcard.last{border-color:var(--green);background:#F7FBF7}
+.lcard.last .ico{background:var(--green);color:#fff}
+.ctx-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.ctx-top .l{font-size:12px;color:var(--ink-3)}
+.ctx-top h2{margin:0;font-size:21px}
+.kpi3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.kpi3 div{background:#FAF8F4;border-radius:10px;padding:8px 10px;min-width:0}
+.kpi3 .l{font-size:11.5px;color:var(--ink-3)}
+.kpi3 .v{font-weight:700;font-variant-numeric:tabular-nums}
+.kpi3 .now .v{color:var(--red)}
+.pblock{border:1.5px dashed var(--line);border-radius:12px;padding:12px}
+.pb-h{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.pb-t{display:flex;align-items:center;gap:8px;font-weight:600}
+.pb-s{font-size:12px;color:var(--ink-3);margin-top:2px}
+.pb-actions{display:flex;gap:6px}
+.thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:8px;margin-top:10px}
+.thumbs:empty{display:none}
+.th{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;background:#EEE;border:1px solid var(--line);display:grid;place-items:center}
+.th img{width:100%;height:100%;object-fit:cover;display:block;cursor:zoom-in}
+.th .rm{position:absolute;top:4px;right:4px;width:26px;height:26px;border-radius:99px;border:none;background:rgba(0,0,0,.62);color:#fff;display:grid;place-items:center;cursor:pointer}
+.th .rm svg{width:15px;height:15px}
+.cb{position:relative}
+.cb-list{position:absolute;left:0;right:0;top:100%;margin-top:4px;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 28px rgba(0,0,0,.14);max-height:244px;overflow:auto;z-index:26;padding:4px}
+.cb-list button{display:block;width:100%;text-align:left;padding:11px 12px;border:none;background:none;font-size:15px;border-radius:8px;cursor:pointer}
+.cb-list button:hover,.cb-list button.on{background:var(--red-50)}
+.cb-list mark{background:none;color:var(--red);font-weight:700}
+
+/* ---------- Supervisor ---------- */
+.gate{max-width:420px;margin:40px auto}
+.gate .ico{width:56px;height:56px;border-radius:16px;background:var(--red-50);color:var(--red);display:grid;place-items:center;margin-bottom:12px}
+.gate .ico svg{width:28px;height:28px}
+.gate input{text-align:center;font-size:24px!important;letter-spacing:.35em;font-weight:700}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{padding:6px 12px;border-radius:99px;border:1.5px solid var(--line);background:#fff;font-size:13px;font-weight:600;cursor:pointer}
+.chip.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.pbar{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;justify-content:space-between}
+.pbar .fld{min-width:180px}
+.custom{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.custom input{width:auto;padding:7px 10px;font-size:14px;border:1.5px solid var(--line);border-radius:10px;background:#FCFBF9}
+.range{font-size:13px;color:var(--ink-3);margin:-4px 2px 10px}
+.drill{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 14px}
+.drill .crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:4px;flex:1;min-width:0}
+.drill .crumbs button{border:1.5px solid var(--line);background:#fff;color:var(--ink-2);border-radius:99px;padding:5px 11px;font-size:13px;font-weight:600;cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.drill .crumbs button:hover{border-color:var(--red-100);color:var(--red)}
+.drill .crumbs button.cur{background:var(--red);border-color:var(--red);color:#fff;cursor:default}
+.drill .sep{color:var(--ink-3)}
+.drill .hint{flex-basis:100%;font-size:12px;color:var(--ink-3)}
+#supBody{transition:opacity .15s}
+#supBody.busy{opacity:.45;pointer-events:none}
+
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
+@media (min-width:700px){.stats{grid-template-columns:repeat(3,1fr)}}
+@media (min-width:1100px){.stats{grid-template-columns:repeat(5,1fr)}}
+.stat{position:relative;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;box-shadow:var(--shadow);text-align:left;font:inherit;color:inherit;width:100%;min-width:0}
+.stat .v{font-size:26px;font-weight:700;line-height:1.15;font-variant-numeric:tabular-nums}
+.stat .l{font-size:12.5px;color:var(--ink-3);padding-right:40px}
+.stat .s{font-size:11.5px;color:var(--ink-3);margin-top:2px}
+.stat .ico{position:absolute;top:10px;right:10px;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;color:var(--k);background:var(--kb)}
+.stat .go{display:block;font-size:12px;font-weight:600;color:var(--red);margin-top:4px}
+.stat.first{grid-column:1/-1}
+@media (min-width:700px){.stat.first{grid-column:auto}}
+button.stat{cursor:pointer;transition:border-color .15s,transform .1s}
+button.stat:hover{border-color:var(--red-100);transform:translateY(-1px)}
+
+.charts{display:grid;gap:14px}
+@media (min-width:900px){.charts{grid-template-columns:1fr 1fr}.charts .span2{grid-column:1/-1}}
+.charts .card{margin:0;min-width:0}
+.cic{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;color:#fff;background:var(--c);flex:none}
+.cic svg{width:16px;height:16px;color:#fff!important}
+.hrow{display:grid;grid-template-columns:minmax(84px,36%) 1fr 34px;align-items:center;gap:8px;padding:4px;border-radius:8px}
+.hrow .lab{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hrow .track{height:14px;border-left:1px solid #CFCAC0}
+.hrow .fill{height:100%;background:var(--c);border-radius:0 4px 4px 0}
+.hrow .val{font-size:14px;font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
+.hrow.zero .lab,.hrow.zero .val{color:#A9A6AE;font-weight:400}
+.hrow.pick{cursor:pointer}
+.hrow.pick:hover{background:#FBF7F2}
+.hrow.pick:hover .fill{filter:brightness(.85)}
+.svgbox svg{display:block;width:100%;height:auto}
+.svgbox text{font-family:inherit}
+.svgbox .hit.pick{cursor:pointer}
+.svgbox .hit.pick:hover{fill:rgba(198,40,40,.06)}
+.donuts{display:grid;gap:8px}
+.donut{text-align:center;min-width:0}
+.donut svg{width:100%;max-width:132px;height:auto}
+.donut .dseg.pick{cursor:pointer;transition:stroke-width .12s}
+.donut .dseg.pick:hover{stroke-width:20}
+.donut .dt{font-weight:600;font-size:14px;margin-top:2px}
+.donut .dl{display:flex;flex-direction:column;align-items:center;gap:2px;margin-top:2px}
+.donut .lg{border:0;background:none;font-size:12px;color:var(--ink-3);padding:2px 6px;border-radius:6px;cursor:pointer}
+.donut .lg:hover{background:#FBF7F2;color:var(--ink)}
+.donut .lg:disabled{cursor:default;opacity:.6}
+.donut .lg i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px}
+.pick:focus-visible{outline:3px solid var(--red-100);outline-offset:2px}
+.flash{animation:flash 1.2s ease}
+@keyframes flash{0%,100%{box-shadow:var(--shadow)}30%{box-shadow:0 0 0 4px var(--red-100)}}
+#tip{position:fixed;z-index:60;pointer-events:none;background:var(--ink);color:#fff;font-size:13px;padding:6px 10px;border-radius:8px;white-space:nowrap;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+#tip small{display:block;color:var(--yellow);font-size:11px}
+
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:700;padding:3px 8px;border-radius:99px;white-space:nowrap}
+.b-pass{background:var(--green-50);color:var(--green)}
+.b-hold{background:var(--amber-50);color:var(--amber)}
+.b-red{background:var(--red-50);color:var(--red)}
+.b-wh{background:var(--yellow-50);color:#7A6200}
+.b-blue{background:var(--blue-50);color:var(--blue)}
+.b-violet{background:var(--violet-50);color:var(--violet)}
+.b-gray{background:#F1EFEA;color:var(--ink-2)}
+.empty{text-align:center;color:var(--ink-3);padding:36px 12px}
+.empty .spin{margin:0 auto 10px}
+
+.ilist{display:grid;gap:10px}
+@media (min-width:900px){.ilist{grid-template-columns:1fr 1fr}}
+.item{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;box-shadow:var(--shadow);cursor:pointer;transition:border-color .15s;min-width:0}
+.item:hover{border-color:var(--red-100)}
+.item .t{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.item .p{font-weight:700;font-size:15px}
+.item .id{font-size:12px;color:var(--ink-3)}
+.item .bd{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.item .pr{font-size:13.5px;color:var(--ink-2);margin-top:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;white-space:pre-line}
+.item .m{font-size:12.5px;color:var(--ink-3);margin-top:6px;display:flex;flex-wrap:wrap;gap:3px 12px}
+.istrip{display:flex;gap:6px;margin-top:8px}
+.pth{position:relative;width:58px;height:58px;border-radius:9px;overflow:hidden;background:#F1EFEA;display:grid;place-items:center;color:var(--ink-3);flex:none;border:1px solid var(--line)}
+.pth img{width:100%;height:100%;object-fit:cover;display:block;cursor:zoom-in}
+.pth>svg{width:18px;height:18px;opacity:.45}
+.ld{background:linear-gradient(90deg,#EFECE6 0%,#F8F6F2 50%,#EFECE6 100%)!important;background-size:200% 100%!important;animation:shim 1.2s linear infinite}
+.ld>svg{display:none}
+@keyframes shim{to{background-position:-200% 0}}
+.pth .more{position:absolute;inset:0;background:rgba(0,0,0,.55);color:#fff;font-weight:700;display:grid;place-items:center;font-size:14px}
+.pager{display:flex;align-items:center;justify-content:center;gap:8px;margin:14px 0}
+
+.hero-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.hero h2{margin:2px 0 4px;font-size:20px}
+.hero-sub{font-size:13.5px;color:var(--ink-2)}
+.hero-badges{display:flex;gap:6px;flex-wrap:wrap}
+.hero-kpi{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:14px}
+@media (min-width:700px){.hero-kpi{grid-template-columns:repeat(4,1fr)}}
+.hero-kpi div{background:#FAF8F4;border-radius:10px;padding:8px 10px;min-width:0}
+.hero-kpi .l{font-size:11.5px;color:var(--ink-3)}
+.hero-kpi .v{font-weight:700;word-break:break-word}
+.cols2{display:grid;grid-template-columns:1fr;gap:14px}
+@media (min-width:900px){.cols2{grid-template-columns:1fr 1fr}}
+.cols2>.card{margin-bottom:0}
+.kv{display:grid;grid-template-columns:120px 1fr;gap:8px 12px;font-size:14px;margin:0}
+.kv dt{color:var(--ink-3)}
+.kv dd{margin:0;font-weight:500;word-break:break-word;white-space:pre-wrap}
+.ph-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+.ph-grid .pth{width:100%;height:auto;aspect-ratio:1;border-radius:10px}
+.dchips{display:flex;flex-wrap:wrap;gap:6px}
+.dchips button{border:1.5px solid var(--line);background:#FCFBF9;border-radius:99px;padding:7px 12px;font-size:13px;font-weight:600;cursor:pointer;text-align:left}
+.dchips button:hover{border-color:var(--red-100);color:var(--red);background:#fff}
+.dnav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:4px}
+
+/* ---------- คิวส่งเบื้องหลัง ---------- */
+.qpill{position:fixed;right:16px;bottom:calc(var(--bnav-off) + 84px);z-index:35;display:flex;align-items:center;gap:8px;background:var(--ink);color:#fff;border-radius:99px;padding:10px 15px;font-size:13.5px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.25);cursor:pointer;border:none}
+@media (min-width:960px){.qpill{bottom:24px;right:28px}}
+.qpill.err{background:var(--red)}
+.qpill.ok{background:var(--green)}
+.qpill .spin.sm{width:16px;height:16px;border-width:2px;border-color:rgba(255,255,255,.3);border-top-color:#fff}
+.qov{position:fixed;inset:0;z-index:50;background:rgba(20,18,24,.45);display:flex;align-items:flex-end;justify-content:center;animation:fade .15s}
+@media (min-width:700px){.qov{align-items:center}}
+.qsheet{background:#fff;width:100%;max-width:560px;max-height:85vh;overflow:auto;border-radius:18px 18px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom))}
+@media (min-width:700px){.qsheet{border-radius:18px}}
+.qhead{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.qhead h3{margin:0;font-size:18px}
+.qhead .iconbtn{font-size:22px;line-height:1}
+.qi{display:flex;gap:10px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:12px;margin-bottom:8px;background:#FCFBF9}
+.qth{width:48px;height:48px;border-radius:10px;overflow:hidden;background:#EEE;display:grid;place-items:center;flex:none;color:var(--ink-3)}
+.qth img{width:100%;height:100%;object-fit:cover}
+.qb{flex:1;min-width:0}
+.qn{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qm{font-size:12.5px;color:var(--ink-3)}
+.qe{font-size:12.5px;color:var(--red);margin-top:2px}
+.qr{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.qa{display:flex;gap:4px}
+
+/* ---------- ดูรูปใหญ่ + ซูม ---------- */
+.lb{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;padding:12px;touch-action:none;user-select:none;-webkit-user-select:none;overflow:hidden}
+.lb img{max-width:100%;max-height:100%;object-fit:contain;transform-origin:center center;will-change:transform;cursor:zoom-in;-webkit-user-drag:none;user-select:none}
+.lb.zoomed img{cursor:grab}
+.lb.anim img{transition:transform .18s ease-out}
+.lb button{position:absolute;top:calc(12px + env(safe-area-inset-top));right:12px;width:42px;height:42px;border-radius:99px;border:none;background:rgba(255,255,255,.18);color:#fff;display:grid;place-items:center;cursor:pointer}
+.lb-ctl{position:absolute;left:50%;bottom:calc(16px + env(safe-area-inset-bottom));transform:translateX(-50%);display:flex;align-items:center;gap:4px;background:rgba(0,0,0,.6);border-radius:99px;padding:5px}
+.lb .lb-ctl button{position:static;width:40px;height:40px;font-size:20px;font-weight:600;line-height:1}
+.lb .lb-ctl button svg{width:18px;height:18px}
+.lb-pct{min-width:52px;text-align:center;color:#fff;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
+.lb .lb-nav{top:50%;right:auto;left:12px;width:46px;height:46px;margin-top:-23px;background:rgba(0,0,0,.5);z-index:2}
+.lb .lb-nav.nx{left:auto;right:12px}
+.lb .lb-nav svg{width:24px;height:24px}
+@media (max-width:559px){.lb .lb-nav{width:40px;height:40px;margin-top:-20px;left:6px}.lb .lb-nav.nx{right:6px;left:auto}}
+.lb-cnt{position:absolute;top:calc(20px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);color:#fff;font-size:13px;font-weight:600;background:rgba(0,0,0,.5);padding:4px 12px;border-radius:99px;pointer-events:none;font-variant-numeric:tabular-nums}
+.lb-hint{position:absolute;top:calc(22px + env(safe-area-inset-top));left:16px;right:70px;color:rgba(255,255,255,.75);font-size:12.5px;pointer-events:none}
+.lb.multi .lb-hint{top:calc(56px + env(safe-area-inset-top))}
+.lb.zoomed .lb-hint{display:none}
+.lb-load{position:absolute;left:50%;top:50%;margin:-19px 0 0 -19px;pointer-events:none}
+
+.spin{width:38px;height:38px;border-radius:99px;border:4px solid var(--red-50);border-top-color:var(--red);animation:rot .8s linear infinite}
+.spin.sm{width:22px;height:22px;border-width:3px}
+.lb .spin{border-color:rgba(255,255,255,.25);border-top-color:#fff}
+.toast{position:fixed;left:50%;top:calc(72px + env(safe-area-inset-top));transform:translateX(-50%);z-index:80;background:var(--ink);color:#fff;padding:11px 16px;border-radius:12px;font-size:14px;max-width:calc(100% - 32px);box-shadow:0 8px 24px rgba(0,0,0,.2);animation:fade .15s;text-align:center}
+.toast.err{background:var(--red)}
+.toast.ok{background:var(--green)}
+.boot{position:fixed;inset:0;z-index:90;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center}
+.boot img{width:84px;height:84px;object-fit:contain}
+@keyframes rot{to{transform:rotate(360deg)}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+
+@media print{
+  .side,.top,.bnav,.noprint,#tip,.toast,.lb,.qpill,.qov{display:none!important}
+  .main{margin:0!important;padding:0!important}
+  body{background:#fff}
+  .card,.stat,.item{box-shadow:none;break-inside:avoid}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<div class="boot" id="boot">
+  <img src="https://raw.githubusercontent.com/chakkawan01702-commits/Logo-smc/main/SMC_favicon_128.png" alt="SMC">
+  <div class="spin" id="bootSpin"></div>
+  <div id="bootMsg" style="color:var(--ink-2)">กำลังโหลดระบบ…</div>
+</div>
+
+<aside class="side">
+  <div class="brand">
+    <img src="https://raw.githubusercontent.com/chakkawan01702-commits/Logo-smc/main/SMC_favicon_128.png" alt="SMC">
+    <div><div class="b1">SMC QC Report</div><div class="b2">รายงาน Quality รายชั่วโมง</div></div>
+  </div>
+  <nav class="snav" id="snav"></nav>
+  <div class="sfoot" id="sfoot"></div>
+</aside>
+
+<div class="main">
+  <header class="top">
+    <button class="iconbtn" id="btnBack" type="button" hidden aria-label="ย้อนกลับ"></button>
+    <img class="top-logo" id="topLogo" src="https://raw.githubusercontent.com/chakkawan01702-commits/Logo-smc/main/SMC_favicon_128.png" alt="SMC">
+    <div class="top-t"><div class="crumb" id="crumb"></div><h1 id="pageTitle">SMC QC Report</h1></div>
+    <div class="top-act" id="topAct"></div>
+  </header>
+
+  <!-- Operator: เลือกไลน์ -->
+  <section class="view" id="vLines" hidden>
+    <div class="page">
+      <section class="card">
+        <div class="card-h"><h2 id="hLines"></h2></div>
+        <div class="lgrid" id="lineGrid"></div>
+      </section>
+    </div>
+  </section>
+
+  <!-- Operator: ฟอร์มบันทึก -->
+  <section class="view" id="vForm" hidden>
+    <div class="page narrow">
+      <section class="card">
+        <div class="ctx-top">
+          <div><div class="l">ไลน์ผลิต</div><h2 id="fLine"></h2></div>
+          <button class="btn sm" type="button" id="btnChangeLine"></button>
+        </div>
+        <div class="kpi3">
+          <div><div class="l">วันที่</div><div class="v" id="fDate"></div></div>
+          <div><div class="l">เวลา Login</div><div class="v" id="fLogin"></div></div>
+          <div class="now"><div class="l">เวลาปัจจุบัน</div><div class="v" id="fNow"></div></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-h"><h2 id="hWho"></h2></div>
+        <label class="fld" id="wReporter"><span>ชื่อผู้รายงาน <b>*</b></span><input id="reporter" maxlength="60" autocomplete="off" placeholder="พิมพ์ชื่อ หรือแตะเพื่อเลือก"></label>
+        <label class="fld" id="wProduct" style="margin-bottom:0"><span>Product <b>*</b></span><input id="product" maxlength="100" autocomplete="off" placeholder="พิมพ์ชื่อ Product หรือแตะเพื่อเลือก"></label>
+      </section>
+
+      <section class="card">
+        <div class="card-h"><h2 id="hPhoto"></h2><span class="sub">ไม่บังคับ</span></div>
+        <div class="pblock">
+          <div class="pb-h">
+            <div><div class="pb-t" id="pbTitle"></div><div class="pb-s" id="photoHint"></div></div>
+            <div class="pb-actions">
+              <button type="button" class="btn sm primary" id="btnCam"></button>
+              <button type="button" class="btn sm" id="btnGal" title="เลือกจากคลังรูป" aria-label="เลือกจากคลังรูป"></button>
+            </div>
+          </div>
+          <div class="thumbs" id="thumbs"></div>
+          <input type="file" id="inCamera" accept="image/*" capture="environment" hidden>
+          <input type="file" id="inGallery" accept="image/*" multiple hidden>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-h"><h2 id="hProblem"></h2></div>
+        <label class="fld" id="wProblem"><span>หมายเหตุ / ปัญหาที่พบ <b>*</b></span><textarea id="problem" maxlength="1000" placeholder="พบปัญหาด้านไหน เช่น สี, ขนาด, น้ำหนัก, ซีล, สิ่งแปลกปลอม"></textarea></label>
+        <label class="fld"><span>การแก้ไข</span><textarea id="action" maxlength="1000" placeholder="แก้ไขอะไรไปบ้าง"></textarea></label>
+        <label class="check"><input type="checkbox" id="extra"> สุ่มเพิ่ม</label>
+        <label class="fld" id="wExtra" hidden style="margin:12px 0 0"><span>ผลการสุ่มเพิ่ม <b>*</b></span><textarea id="extraNote" maxlength="1000" placeholder="สุ่มเพิ่มแล้วเจอเพิ่มหรือไม่ จำนวนเท่าไร"></textarea></label>
+      </section>
+
+      <div class="actbar"><button class="btn primary lg" id="btnSave" type="button"></button></div>
+    </div>
+  </section>
+
+  <!-- Supervisor: เข้าสู่ระบบ -->
+  <section class="view" id="vGate" hidden>
+    <div class="page">
+      <div class="card gate">
+        <div class="ico" id="gateIco"></div>
+        <h2 style="margin:0 0 4px">เข้าสู่ระบบ QC Supervisor</h2>
+        <div class="muted" style="margin-bottom:14px">สำหรับดู Dashboard ภาพรวม และรายการ QC ทุกไลน์</div>
+        <label class="fld"><span>รหัส Supervisor <b>*</b></span><input id="pin" type="password" inputmode="numeric" maxlength="8" autocomplete="off" placeholder="••••"></label>
+        <button class="btn primary block lg" type="button" id="btnPin"></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Supervisor: Dashboard + รายการ (ใช้ตัวกรองร่วมกัน) -->
+  <section class="view" id="vSup" hidden>
+    <div class="page">
+      <section class="card noprint">
+        <div class="pbar">
+          <div><div class="fld sm"><span>ช่วงวันที่</span></div><div class="chips" id="pChips"></div></div>
+          <label class="fld sm"><span>ไลน์ผลิต</span><select id="rLine"></select></label>
+        </div>
+        <div class="custom" id="pCustom" hidden>
+          <input type="date" id="rFrom"><span class="muted">ถึง</span><input type="date" id="rTo">
+          <button class="btn sm dark" type="button" id="pApply">ใช้ช่วงนี้</button>
+        </div>
+      </section>
+      <div class="range" id="rangeTxt"></div>
+      <div class="drill noprint" id="drillBar"></div>
+      <div id="supBody">
+        <div id="paneDash">
+          <div class="stats" id="kpis"></div>
+          <div class="charts" id="charts"></div>
+        </div>
+        <div id="paneList" hidden></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Supervisor: รายละเอียด 1 รายการ -->
+  <section class="view" id="vDetail" hidden></section>
+</div>
+
+<nav class="bnav" id="bnav"></nav>
+
+<div id="tip" hidden></div>
+<button class="qpill" id="qPill" type="button" hidden></button>
+<div class="qov" id="qSheet" hidden>
+  <div class="qsheet" role="dialog" aria-label="คิวส่งเบื้องหลัง">
+    <div class="qhead"><h3>คิวส่งเบื้องหลัง</h3><button class="iconbtn" type="button" data-qclose aria-label="ปิด">×</button></div>
+    <div class="muted" style="font-size:13px;margin-bottom:12px">ระบบส่งให้อัตโนมัติ ใช้งานต่อได้เลย — ถ้าปิดแอปก่อนส่งเสร็จ เปิดใหม่ในเครื่อง/เบราว์เซอร์เดิมจะส่งต่อให้</div>
+    <div id="qBody"></div>
+  </div>
+</div>
+<div id="toastHost"></div>
+<div class="lb" id="lb" hidden>
+  <img id="lbImg" alt="" draggable="false">
+  <div class="lb-load" id="lbLoad" hidden><div class="spin"></div></div>
+  <div class="lb-hint" id="lbHint"></div><div class="lb-cnt" id="lbCnt" hidden></div>
+  <button type="button" class="lb-nav pv" data-nav="-1" aria-label="รูปก่อนหน้า" hidden></button>
+  <button type="button" class="lb-nav nx" data-nav="1" aria-label="รูปถัดไป" hidden></button>
+  <button type="button" id="lbClose" aria-label="ปิด"></button>
+  <div class="lb-ctl">
+    <button type="button" data-z="out" aria-label="ซูมออก">−</button><span class="lb-pct" id="lbPct">100%</span><button type="button" data-z="in" aria-label="ซูมเข้า">+</button>
+    <button type="button" data-z="reset" aria-label="พอดีจอ" id="lbReset"></button><button type="button" data-z="rot" aria-label="หมุนรูป" title="หมุนดู 90°" id="lbRot"></button>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+ *  ICONS (Lucide-style) — ข้อความคงที่ในโค้ด ไม่ได้มาจากผู้ใช้
+ * ============================================================ */
+const ICONS = {
+  camera:'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>',
+  image:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>',
+  check:'<path d="M20 6 9 17l-5-5"/>',
+  x:'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+  search:'<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+  clip:'<rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/>',
+  factory:'<path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M17 18h1"/><path d="M12 18h1"/><path d="M7 18h1"/>',
+  package:'<path d="M16.5 9.4 7.55 4.24"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96 12 12.01l8.73-5.05"/><path d="M12 22.08V12"/>',
+  user:'<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+  alert:'<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
+  wrench:'<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
+  save:'<path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/>',
+  back:'<path d="m12 19-7-7 7-7"/><path d="M19 12H5"/>',
+  logout:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/>',
+  lock:'<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+  shield:'<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>',
+  chart:'<path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/>',
+  list:'<path d="M3 12h.01"/><path d="M3 18h.01"/><path d="M3 6h.01"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M8 6h13"/>',
+  trend:'<path d="M22 7 13.5 15.5 8.5 10.5 2 17"/><path d="M16 7h6v6"/>',
+  clock:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+  pie:'<path d="M21 12c.552 0 1.005-.449.95-.998a10 10 0 0 0-8.953-8.951c-.55-.055-.998.398-.998.95v8a1 1 0 0 0 1 1z"/><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/>',
+  refresh:'<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>',
+  print:'<path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6"/><rect x="6" y="14" width="12" height="8" rx="1"/>',
+  rotate:'<path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/>',
+  undo:'<path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"/>',
+  right:'<path d="m9 18 6-6-6-6"/>',
+  left:'<path d="m15 18-6-6 6-6"/>',
+  swap:'<path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/>'
+};
+function ic(n){ return '<svg class="i" viewBox="0 0 24 24" aria-hidden="true">'+(ICONS[n]||'')+'</svg>'; }
+
+/* ============================================================
+ *  STATE & UTIL
+ * ============================================================ */
+const TZ='Asia/Bangkok', NO_REPORTER='__none__', TOKEN_KEY='smc_qc_sup_token', UI_KEY='smc_qc_ui_v1', DRAFT_KEY='smc_qc_draft::';
+const C={ red:'#C62828', blue:'#1D5FBF', green:'#2E7D32', violet:'#5B3DB5', amber:'#C77700', teal:'#00796B', rest:'#E6E2DA' };
+const FLAG_LABEL={ extra:'สุ่มเพิ่ม', noExtra:'ไม่ได้สุ่มเพิ่ม', photo:'มีรูปแนบ', noPhoto:'ไม่มีรูปแนบ', action:'ระบุการแก้ไขแล้ว', noAction:'ยังไม่ระบุการแก้ไข' };
+const PERIODS=[['today','วันนี้'],['7d','7 วัน'],['30d','30 วัน'],['month','เดือนนี้'],['custom','กำหนดเอง']];
+const PAGE_SIZE=40;
+
+const S={
+  lines:[], maxPhotos:5, offset:0, route:'', stack:[],
+  line:'', loginTime:'', photos:[], saving:false, names:[], products:[],
+  token:'', after:'dash',
+  period:'today', base:null, drill:[], cache:{}, res:null, pane:'dash', page:1, req:0
+};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+/* ============================================================
+ *  SUPABASE — ตั้งค่า + ตัวเชื่อม (แทน google.script.run / รหัส.gs เดิม)
+ * ============================================================ */
+const SUPABASE_URL='https://fldaesemokdthzwvsryr.supabase.co';
+const SUPABASE_KEY='sb_publishable_XgnsW3Kaw-6Gsbiy5uAEbQ_JWQ15chW';   // publishable key ใช้ในหน้าเว็บได้ (สิทธิ์คุมด้วย RLS)
+const BUCKET='qc-photos';
+const SUP_EMAIL='qc-supervisor@smc.com';
+const PIN_PREFIX='SMCqc-';                 // รหัสผ่านจริงของ Supervisor = PIN_PREFIX + PIN ที่กรอก
+const ROWS_LIMIT=500, MAX_DAYS=92, SIGN_SECONDS=6*60*60;
+const sb=supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth:{ storage:window.sessionStorage, persistSession:true, autoRefreshToken:true }   // Login Supervisor อยู่เฉพาะแท็บนี้ เหมือนเดิม
+});
+
+function dbErr(error){
+  const code=error&&error.code, msg=(error&&error.message)||String(error);
+  if(code==='23503') return new Error('ไม่พบไลน์ผลิตที่เลือก');
+  if(code==='22023') return new Error(msg);
+  if(code==='23514'||code==='23502'||code==='22001') return new Error('ข้อมูลไม่ถูกต้อง: '+msg);
+  return new Error(msg);
+}
+async function supSession(){
+  const { data }=await sb.auth.getSession();
+  const s=data&&data.session;
+  return s && s.user && s.user.app_metadata && s.user.app_metadata.role==='qc_supervisor' ? s : null;
+}
+async function requireSup(){ if(!(await supSession())) throw new Error('SESSION_EXPIRED'); }
+function b64Blob(b64, mime){
+  const bin=atob(b64), u=new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++) u[i]=bin.charCodeAt(i);
+  return new Blob([u],{ type:mime });
+}
+
+const API={
+  async getInitData(){
+    const [lines, clock]=await Promise.all([
+      sb.from('qc_lines').select('name').eq('active',true).order('sort_order').order('name'),
+      sb.rpc('qc_server_now')
+    ]);
+    if(lines.error) throw dbErr(lines.error);
+    const t=clock.error?NaN:Date.parse(clock.data);
+    return { lines:lines.data.map(x=>x.name), serverNow:isNaN(t)?Date.now():t, maxPhotos:5 };
+  },
+
+  async getLineMemory(line){
+    const { data, error }=await sb.rpc('qc_line_memory',{ p_line:line });
+    if(error) throw dbErr(error);
+    return data||{ line, names:[], products:[] };
+  },
+
+  /** อัปโหลดรูปก่อน แล้วบันทึกรายการ — ส่งซ้ำได้ปลอดภัย (ชื่อรูป + client_ref ผูกกับคิวรายการเดียว) */
+  async saveRecord(p){
+    const ref=String(p.clientRef||'');
+    const photos=Array.isArray(p.photos)?p.photos:[];
+    if(photos.length>5) throw new Error('แนบรูปได้สูงสุด 5 รูป');
+    const paths=[];
+    for(let i=0;i<photos.length;i++){
+      const mime=photos[i].mime==='image/png'?'image/png':'image/jpeg';
+      const path=ref+'/'+(i+1)+(mime==='image/png'?'.png':'.jpg');
+      const { error }=await sb.storage.from(BUCKET).upload(path, b64Blob(photos[i].data,mime), { contentType:mime, upsert:false });
+      const exists=error && (error.status===409 || String(error.statusCode)==='409' || /already exists|duplicate/i.test(error.message));
+      if(error && !exists) throw new Error('อัปโหลดรูปที่ '+(i+1)+' ไม่สำเร็จ: '+error.message);
+      paths.push(path);
+    }
+    const { error }=await sb.from('qc_records').insert({
+      client_ref:ref, recorded_at:new Date(p.recordedAt||Date.now()).toISOString(),
+      line:p.line, reporter:p.reporter, product:p.product, login_time:p.loginTime||null,
+      problem:p.problem, action:p.action||'', extra_sample:!!p.extraSample, extra_note:p.extraSample?(p.extraNote||''):'',
+      photo_paths:paths
+    });
+    if(error){
+      if(error.code==='23505' && /client_ref/.test((error.message||'')+(error.details||''))) return { ok:true, dedup:true };   // เคยบันทึกแล้ว
+      throw dbErr(error);
+    }
+    return { ok:true };
+  },
+
+  async supervisorLogin(pin){
+    pin=String(pin==null?'':pin).trim();
+    const { data, error }=await sb.auth.signInWithPassword({ email:SUP_EMAIL, password:PIN_PREFIX+pin });
+    if(error){
+      if(error.status===429 || /rate limit|too many/i.test(error.message)) throw new Error('ใส่รหัสผิดหลายครั้ง กรุณารอสักครู่แล้วลองใหม่');
+      if(/invalid login|invalid credentials/i.test(error.message)) throw new Error('รหัสไม่ถูกต้อง');
+      throw new Error(error.message);
+    }
+    const role=data.user && data.user.app_metadata && data.user.app_metadata.role;
+    if(role!=='qc_supervisor'){ await sb.auth.signOut(); throw new Error('บัญชีนี้ยังไม่ได้ตั้งสิทธิ์ Supervisor'); }
+    return { ok:true, token:'supabase' };
+  },
+  async checkSupervisor(){ return { ok:!!(await supSession()) }; },
+  async supervisorLogout(){ try{ await sb.auth.signOut(); }catch(e){} return { ok:true }; },
+
+  async getSupervisorData(token, f){
+    await requireSup();
+    const re=/^\d{4}-\d{2}-\d{2}$/;
+    if(!re.test(f.from)||!re.test(f.to)) throw new Error('รูปแบบวันที่ไม่ถูกต้อง');
+    if(f.from>f.to) throw new Error('วันที่เริ่มต้นต้องไม่เกินวันที่สิ้นสุด');
+    if((Date.parse(f.to)-Date.parse(f.from))/86400000>=MAX_DAYS) throw new Error('เลือกช่วงวันที่ได้ไม่เกิน '+MAX_DAYS+' วัน');
+    const { data, error }=await sb.rpc('qc_dashboard',{ f });
+    if(error) throw dbErr(error);
+    data.filter=f;
+    data.kpi.linesTotal=S.lines.length;
+    data.truncated=data.total>ROWS_LIMIT;
+    return data;
+  },
+
+  /** รูปเก็บใน Storage แบบ Private → ขอลิงก์ชั่วคราว (Signed URL) ให้ Supervisor เท่านั้น */
+  async getThumbs(token, ids){
+    await requireSup();
+    ids=(Array.isArray(ids)?ids:[]).map(String).slice(0,24);
+    if(!ids.length) return { thumbs:{} };
+    const { data, error }=await sb.storage.from(BUCKET).createSignedUrls(ids, SIGN_SECONDS);
+    if(error) throw dbErr(error);
+    const out={};
+    (data||[]).forEach(x=>{ if(x && x.path && x.signedUrl && !x.error) out[x.path]=x.signedUrl; });
+    return { thumbs:out };
+  },
+  async getPhoto(token, id){
+    await requireSup();
+    const { data, error }=await sb.storage.from(BUCKET).createSignedUrl(String(id), SIGN_SECONDS);
+    if(error || !data) throw new Error('ไม่พบรูปนี้');
+    return { id, dataUrl:data.signedUrl };
+  }
+};
+function run(fn,...args){
+  if(typeof API[fn]!=='function') return Promise.reject(new Error('ไม่พบฟังก์ชัน '+fn));
+  return API[fn](...args);
+}
+function errMsg(e){ return String(e&&e.message?e.message:e).replace(/^Error:\s*/,''); }
+/** เรียกฟังก์ชันฝั่ง Supervisor — หมดเวลาเข้าสู่ระบบ → กลับหน้าใส่รหัส */
+async function supCall(fn,...args){
+  try{ return await run(fn, S.token, ...args); }
+  catch(e){
+    if(/SESSION_EXPIRED/.test(errMsg(e))){ setToken(''); toast('หมดเวลาเข้าสู่ระบบ กรุณาใส่รหัสใหม่', 'err'); go('gate',{reset:true}); throw new Error('SESSION_EXPIRED'); }
+    throw e;
+  }
+}
+function lsGet(k){ try{ return localStorage.getItem(k)||''; }catch(e){ return ''; } }
+function lsSet(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+function ssGet(k){ try{ return sessionStorage.getItem(k)||''; }catch(e){ return ''; } }
+function ssSet(k,v){ try{ v?sessionStorage.setItem(k,v):sessionStorage.removeItem(k); }catch(e){} }
+function loadList(k){ try{ const a=JSON.parse(lsGet(k)||'[]'); return Array.isArray(a)?a.filter(x=>typeof x==='string'&&x):[]; }catch(e){ return []; } }
+function merge(a,b){ const o=[]; a.concat(b).forEach(x=>{ if(x && !o.includes(x)) o.push(x); }); return o.slice(0,30); }
+
+const fDate=new Intl.DateTimeFormat('en-CA',{ timeZone:TZ, year:'numeric', month:'2-digit', day:'2-digit' });
+const fTime=new Intl.DateTimeFormat('en-GB',{ timeZone:TZ, hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false });
+const now=()=>new Date(Date.now()+S.offset);       // เวลาอิง server
+const isoDate=d=>fDate.format(d);
+const thDate=iso=>{ const p=String(iso).split('-'); return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:iso; };
+const shortDate=iso=>{ const p=iso.split('-'); return p[2]+'/'+p[1]; };
+const addDays=(iso,n)=>new Date(Date.parse(iso+'T00:00:00Z')+n*86400000).toISOString().slice(0,10);
+
+function toast(msg, kind){
+  const host=$('#toastHost'); host.innerHTML='<div class="toast'+(kind?' '+kind:'')+'">'+esc(msg)+'</div>';
+  clearTimeout(toast._t); toast._t=setTimeout(()=>{ host.innerHTML=''; }, kind==='err'?6000:3000);
+}
+function spinner(t){ return '<div class="empty"><div class="spin"></div>'+esc(t||'กำลังโหลด…')+'</div>'; }
+
+/* ============================================================
+ *  SHELL: เมนูข้าง (คอม) / เมนูล่าง (มือถือ) / ปุ่มย้อนกลับ
+ * ============================================================ */
+const NAV=[
+  { sec:'Operator QC' },
+  { go:'op', icon:'clip', label:'บันทึกรายการ QC', short:'บันทึก' },
+  { sec:'QC Supervisor' },
+  { go:'dash', icon:'chart', label:'Dashboard', short:'Dashboard', sup:true },
+  { go:'list', icon:'list', label:'รายการละเอียด', short:'รายการ', sup:true }
+];
+const ROUTES={
+  lines: { view:'vLines', nav:'op', title:'เลือกไลน์ผลิต', crumb:'Operator QC' },
+  form:  { view:'vForm', nav:'op', title:'บันทึกรายการ QC', crumb:'Operator QC' },
+  gate:  { view:'vGate', nav:'dash', title:'เข้าสู่ระบบ Supervisor', crumb:'QC Supervisor' },
+  dash:  { view:'vSup', nav:'dash', title:'Dashboard', crumb:'QC Supervisor', sup:true },
+  list:  { view:'vSup', nav:'list', title:'รายการละเอียด', crumb:'QC Supervisor', sup:true },
+  detail:{ view:'vDetail', nav:'list', title:'รายละเอียดรายการ', crumb:'QC Supervisor › รายการละเอียด', sup:true }
+};
+function parseRoute(r){ const i=r.indexOf(':'); return i<0?[r,'']:[r.slice(0,i), r.slice(i+1)]; }
+
+function go(route, opt){
+  opt=opt||{};
+  if(route==='op') route=S.line?'form':'lines';
+  const [name]=parseRoute(route);
+  const R=ROUTES[name]||ROUTES.lines;
+  if(R.sup && !S.token){ S.after=route; route='gate'; }
+  if(route!==S.route){
+    if(opt.reset) S.stack=[];
+    else if(!opt.replace && S.route){
+      const i=S.stack.lastIndexOf(route);
+      if(i>=0) S.stack.length=i; else { S.stack.push(S.route); if(S.stack.length>30) S.stack.shift(); }
+    }
+  }
+  S.route=route;
+  if(!opt.fromHistory) hist(opt.replace?'replace':'push');
+  render();
+  saveUI();
+}
+/* ---------- จำหน้าที่เปิดอยู่ (กดรีเฟรชแล้วกลับมาหน้าเดิม) — เก็บในแท็บนี้เท่านั้น ---------- */
+function saveUI(){
+  ssSet(UI_KEY, JSON.stringify({ route:S.route==='gate'?(S.after||'dash'):S.route, stack:S.stack, drill:S.drill, page:S.page,
+    period:S.period, from:$('#rFrom').value, to:$('#rTo').value, rline:$('#rLine').value,
+    line:S.line, login:S.loginTime }));
+}
+function loadUI(){ try{ return JSON.parse(ssGet(UI_KEY)||'null'); }catch(e){ return null; } }
+/** ร่างฟอร์ม Operator (ข้อความเท่านั้น ไม่รวมรูป) แยกตามไลน์ */
+function saveDraft(){
+  if(!S.line) return;
+  ssSet(DRAFT_KEY+S.line, JSON.stringify({ reporter:$('#reporter').value, product:$('#product').value, problem:$('#problem').value,
+    action:$('#action').value, extra:$('#extra').checked, extraNote:$('#extraNote').value }));
+}
+function loadDraft(){
+  let d=null; try{ d=JSON.parse(ssGet(DRAFT_KEY+S.line)||'null'); }catch(e){}
+  if(!d) return;
+  ['reporter','product','problem','action','extraNote'].forEach(k=>{ $('#'+k).value=d[k]||''; });
+  $('#extra').checked=!!d.extra; $('#wExtra').hidden=!d.extra;
+}
+/** หน้าที่ "ย้อนกลับ" จะไป เมื่อไม่มีประวัติการกด (เช่น เพิ่งเปิดแอป / กดจากเมนู) */
+const PARENT={ form:'lines', gate:'op', dash:'op', list:'dash', detail:'list' };
+function canBack(){
+  const [n]=parseRoute(S.route);
+  return S.stack.length>0 || ((n==='dash'||n==='list') && S.drill.length>0) || !!PARENT[n];
+}
+/** ย้อนกลับ 1 ขั้น: ขั้นเจาะลึก → หน้าที่กดมา → หน้าแม่ */
+function goBack(){
+  const [n]=parseRoute(S.route);
+  if((n==='dash'||n==='list') && S.drill.length){ drillTo(S.drill.length-1); return; }
+  let to=S.stack.pop() || PARENT[n];
+  if(!to) return;
+  if(n==='form' && to==='lines') S.line='';
+  S.route=''; go(to,{replace:true});
+}
+/** บันทึกหน้าปัจจุบันลงประวัติของเบราว์เซอร์ → ปุ่มย้อนกลับของมือถือ/เบราว์เซอร์ใช้ได้ */
+function hist(mode, extra){
+  try{ history[mode==='replace'?'replaceState':'pushState'](Object.assign({ route:S.route, drill:S.drill }, extra||{}), ''); }catch(e){}
+}
+function onHistory(e){
+  const st=(e && e.state) || {};
+  const r=st.route || 'op';
+  const dr=Array.isArray(st.drill) ? st.drill : [];
+  const changed=JSON.stringify(dr)!==JSON.stringify(S.drill);
+  if(!$('#lb').hidden){                      // กดย้อนกลับตอนดูรูปใหญ่ = ปิดรูปอย่างเดียว
+    lbClose();
+    if(r===S.route && !changed) return;
+  }
+  if(r===S.route && !changed) return;        // อยู่หน้าเดิมอยู่แล้ว (เช่น ปิดรูปด้วยปุ่ม ×) → ไม่ต้องทำอะไร
+  S.drill=dr;
+  const i=S.stack.lastIndexOf(r); if(i>=0) S.stack.length=i;
+  S.route=''; go(r,{ replace:true, fromHistory:true });
+  const [n]=parseRoute(r);
+  if(changed && S.base && (n==='dash'||n==='list')){ S.page=1; fetchSup(); }
+}
+function render(){
+  const [name,arg]=parseRoute(S.route);
+  const R=ROUTES[name]||ROUTES.lines;
+  document.querySelectorAll('.view').forEach(v=>v.hidden=true);
+  $('#'+R.view).hidden=false;
+  hideTip();
+  $('#pageTitle').textContent=R.title;
+  $('#crumb').textContent=R.crumb;
+  const back=canBack();
+  $('#btnBack').hidden=!back;
+  $('#topLogo').style.display=back?'none':'';
+  $('#topAct').innerHTML='';
+  setNav(R.nav);
+  window.scrollTo(0,0);
+  ({ lines:renderLines, form:renderForm, gate:renderGate, dash:renderSup, list:renderSup, detail:renderDetail }[name]||renderLines)(arg, name);
+}
+function setNav(key){
+  $('#snav').innerHTML=NAV.map(n=>n.sec?'<div class="sec">'+esc(n.sec)+'</div>':
+    '<button type="button" data-go="'+n.go+'" class="'+(n.go===key?'on':'')+'">'+ic(n.icon)+'<span>'+esc(n.label)+'</span>'+(n.sup&&!S.token?'<span class="lk">'+ic('lock')+'</span>':'')+'</button>').join('');
+  $('#bnav').innerHTML=NAV.filter(n=>n.short).map(n=>'<button type="button" data-go="'+n.go+'" class="'+(n.go===key?'on':'')+'">'+ic(n.icon)+'<span>'+esc(n.short)+'</span>'+(n.sup&&!S.token?'<svg class="i lk" viewBox="0 0 24 24">'+ICONS.lock+'</svg>':'')+'</button>').join('');
+  $('#sfoot').innerHTML=S.token
+    ? '<div class="who">'+ic('shield')+'<div><div style="font-weight:600">QC Supervisor</div><div style="font-size:11.5px;color:#A9A4B3">เข้าสู่ระบบแล้ว</div></div></div><button class="btn sm" type="button" data-logout>'+ic('logout')+'ออกจากระบบ</button>'
+    : '<button class="btn sm" type="button" data-go="dash">'+ic('lock')+'เข้าสู่ระบบ Supervisor</button>';
+}
+function setToken(t){ S.token=t||''; ssSet(TOKEN_KEY, S.token); if(!S.token){ S.res=null; S.cache={}; } }
+async function logout(){
+  const t=S.token; setToken('');
+  try{ await run('supervisorLogout', t); }catch(e){}
+  toast('ออกจากระบบ Supervisor แล้ว');
+  go('op',{reset:true});
+}
+
+/* ============================================================
+ *  OPERATOR QC
+ * ============================================================ */
+function renderLines(){
+  const last=lsGet('qc_line');
+  $('#hLines').innerHTML=ic('factory')+'เลือกไลน์ผลิตของคุณ';
+  $('#lineGrid').innerHTML=S.lines.map(n=>'<button type="button" class="lcard'+(n===last?' last':'')+'" data-line="'+esc(n)+'"><span class="ico">'+ic('factory')+'</span><span><b>'+esc(n)+'</b>'+(n===last?'<span class="badge b-pass" style="margin-top:3px">ใช้ล่าสุด</span>':'')+'</span></button>').join('');
+}
+$('#lineGrid').addEventListener('click', e=>{ const b=e.target.closest('[data-line]'); if(b) pickLine(b.dataset.line); });
+
+function pickLine(name){
+  S.line=name; S.loginTime=fTime.format(now()); lsSet('qc_line', name);
+  S.names=loadList('qc_names::'+name); S.products=loadList('qc_products::'+name);
+  resetForm(false);
+  go('form');
+  run('getLineMemory', name).then(m=>{ if(m.line!==S.line) return; S.names=merge(S.names,m.names); S.products=merge(S.products,m.products); }).catch(()=>{});
+}
+function renderForm(){
+  $('#fLine').textContent=S.line;
+  $('#fLogin').textContent=S.loginTime.slice(0,5);
+  tick();
+}
+$('#btnChangeLine').innerHTML=ic('swap')+'เปลี่ยนไลน์';
+$('#btnChangeLine').onclick=()=>{ S.line=''; go('lines',{replace:true}); };
+$('#hWho').innerHTML=ic('user')+'ผู้รายงานและสินค้า';
+$('#hPhoto').innerHTML=ic('camera')+'รูปถ่าย Defect';
+$('#hProblem').innerHTML=ic('alert')+'ปัญหาและการแก้ไข';
+$('#pbTitle').innerHTML=ic('image')+'รูป Defect';
+$('#btnCam').innerHTML=ic('camera')+'ถ่าย';
+$('#btnGal').innerHTML=ic('image');
+$('#btnSave').innerHTML=ic('save')+'<span id="saveTxt">บันทึก</span>';
+function tick(){ const d=now(); $('#fDate').textContent=thDate(isoDate(d)); $('#fNow').textContent=fTime.format(d); }
+
+/* ---------- ช่องพิมพ์ + รายการให้เลือก (จำแยกตามไลน์) ---------- */
+function hl(x,q){ if(!q) return esc(x); const i=x.toLowerCase().indexOf(q); return i<0?esc(x):esc(x.slice(0,i))+'<mark>'+esc(x.slice(i,i+q.length))+'</mark>'+esc(x.slice(i+q.length)); }
+function combo(input, getList){
+  const wrap=document.createElement('div'); wrap.className='cb';
+  input.parentNode.insertBefore(wrap,input); wrap.appendChild(input);
+  const box=document.createElement('div'); box.className='cb-list'; box.hidden=true; wrap.appendChild(box);
+  let items=[], idx=-1;
+  const show=()=>{
+    const raw=input.value.trim(), q=raw.toLowerCase();
+    items=getList().filter(x=>x!==raw && (!q || x.toLowerCase().includes(q))).slice(0,30); idx=-1;
+    if(!items.length || document.activeElement!==input){ box.hidden=true; return; }
+    box.innerHTML=items.map((x,i)=>'<button type="button" tabindex="-1" data-i="'+i+'">'+hl(x,q)+'</button>').join('');
+    box.hidden=false; box.scrollTop=0;
+  };
+  const pick=i=>{ input.value=items[i]; box.hidden=true; input.closest('.fld').classList.remove('err'); };
+  input.addEventListener('focus', ()=>{ show(); if(window.innerWidth<760) setTimeout(()=>{ if(document.activeElement===input) input.scrollIntoView({ block:'center', behavior:'smooth' }); },300); });
+  input.addEventListener('input', ()=>{ input.closest('.fld').classList.remove('err'); show(); });
+  input.addEventListener('blur', ()=>setTimeout(()=>{ box.hidden=true; },180));
+  input.addEventListener('keydown', e=>{
+    if(box.hidden) return;
+    if(e.key==='ArrowDown'||e.key==='ArrowUp'){ e.preventDefault(); idx=(idx+(e.key==='ArrowDown'?1:-1)+items.length)%items.length; [...box.children].forEach((b,i)=>b.classList.toggle('on',i===idx)); }
+    else if(e.key==='Enter' && idx>=0){ e.preventDefault(); pick(idx); }
+    else if(e.key==='Escape') box.hidden=true;
+  });
+  ['pointerdown','mousedown'].forEach(ev=>box.addEventListener(ev, e=>e.preventDefault()));
+  box.addEventListener('click', e=>{ const b=e.target.closest('[data-i]'); if(b) pick(+b.dataset.i); });
+}
+combo($('#reporter'), ()=>S.names);
+combo($('#product'), ()=>S.products);
+function remember(kind, v){
+  const key=(kind==='names'?'qc_names::':'qc_products::')+S.line;
+  S[kind]=merge([v],S[kind]); lsSet(key, JSON.stringify(merge([v], loadList(key))));
+}
+
+/* ---------- รูปถ่าย (ย่อก่อนอัปโหลด) ---------- */
+function resize(file){
+  return new Promise((resolve,reject)=>{
+    const url=URL.createObjectURL(file), img=new Image();
+    img.onload=()=>{
+      const k=Math.min(1,1600/Math.max(img.naturalWidth,img.naturalHeight));
+      const c=document.createElement('canvas'); c.width=Math.round(img.naturalWidth*k); c.height=Math.round(img.naturalHeight*k);
+      const x=c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,c.width,c.height); x.drawImage(img,0,0,c.width,c.height);
+      URL.revokeObjectURL(url); resolve(c.toDataURL('image/jpeg',0.8));
+    };
+    img.onerror=()=>{ URL.revokeObjectURL(url); reject(new Error('อ่านไฟล์รูปไม่ได้: '+file.name)); };
+    img.src=url;
+  });
+}
+async function addFiles(input){
+  const files=[...(input.files||[])]; input.value='';
+  S.photoBusy=(S.photoBusy||0)+1;
+  try{
+    for(const f of files){
+      if(S.photos.length>=S.maxPhotos){ toast('แนบรูปได้สูงสุด '+S.maxPhotos+' รูป','err'); break; }
+      try{ S.photos.push(await resize(f)); drawThumbs(); }catch(e){ toast(errMsg(e),'err'); }
+    }
+  }finally{ S.photoBusy--; }
+}
+function drawThumbs(){
+  $('#thumbs').innerHTML=S.photos.map((src,i)=>'<div class="th"><img src="'+src+'" alt="รูปที่ '+(i+1)+'" data-i="'+i+'"><button type="button" class="rm" data-rm="'+i+'" aria-label="ลบรูป">'+ic('x')+'</button></div>').join('');
+  $('#photoHint').textContent=S.photos.length+' / '+S.maxPhotos+' รูป';
+}
+$('#btnCam').onclick=()=>$('#inCamera').click();
+$('#btnGal').onclick=()=>$('#inGallery').click();
+$('#inCamera').addEventListener('change', function(){ addFiles(this); });
+$('#inGallery').addEventListener('change', function(){ addFiles(this); });
+$('#thumbs').addEventListener('click', e=>{
+  const rm=e.target.closest('[data-rm]'); if(rm){ S.photos.splice(+rm.dataset.rm,1); drawThumbs(); return; }
+  const im=e.target.closest('img[data-i]'); if(im) lightbox(S.photos.map(src=>({ src })), +im.dataset.i);
+});
+
+/* ---------- บันทึก ---------- */
+$('#extra').addEventListener('change', function(){ $('#wExtra').hidden=!this.checked; if(this.checked) $('#extraNote').focus(); });
+['problem','extraNote'].forEach(id=>$('#'+id).addEventListener('input', function(){ this.closest('.fld').classList.remove('err'); }));
+function resetForm(keepWho){
+  if(!keepWho){ $('#reporter').value=''; $('#product').value=''; }
+  ['problem','action','extraNote'].forEach(id=>{ $('#'+id).value=''; });
+  document.querySelectorAll('#vForm .fld.err').forEach(x=>x.classList.remove('err'));
+  $('#extra').checked=false; $('#wExtra').hidden=true;
+  S.photos=[]; drawThumbs();
+  saveDraft();
+}
+let draftT=0;
+['input','change'].forEach(ev=>$('#vForm').addEventListener(ev, ()=>{ clearTimeout(draftT); draftT=setTimeout(saveDraft,300); }));
+$('#vForm').addEventListener('click', e=>{ if(e.target.closest('.cb-list')) setTimeout(saveDraft,50); });
+function need(id){ const ok=$('#'+id).value.trim()!==''; $('#'+id).closest('.fld').classList.toggle('err',!ok); return ok; }
+$('#btnSave').onclick=async()=>{
+  if(S.saving) return;
+  if(S.photoBusy>0){ toast('กำลังเตรียมรูป รอสักครู่','err'); return; }
+  const extra=$('#extra').checked;
+  const ok=[need('reporter'), need('product'), need('problem'), !extra||need('extraNote')].every(Boolean);
+  if(!ok){ toast('กรุณากรอกช่องที่มี * ให้ครบ','err'); const f=$('#vForm .fld.err'); if(f) f.scrollIntoView({ behavior:'smooth', block:'center' }); return; }
+  S.saving=true;
+  try{
+    const reporter=$('#reporter').value.trim().replace(/\s+/g,' '), product=$('#product').value.trim();
+    const qid='q'+Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+    const recordedAt=now().getTime();                       // เวลาที่กดบันทึกจริง (อิงเวลา server)
+    const item={
+      qid, createdAt:Date.now(), status:'pending', tries:0, error:'',
+      line:S.line, product, reporter, time:fTime.format(new Date(recordedAt)).slice(0,5),
+      thumb: S.photos[0] ? await shrink(S.photos[0], 120) : '',
+      payload:{ line:S.line, reporter, product, loginTime:S.loginTime,
+        problem:$('#problem').value.trim(), action:$('#action').value.trim(), extraSample:extra,
+        extraNote:extra?$('#extraNote').value.trim():'',
+        photos:S.photos.map(d=>({ mime:'image/jpeg', data:d.split(',')[1] })),
+        clientRef:qid, recordedAt }
+    };
+    Q.items.push(item); await qSave(item);
+    remember('names', reporter); remember('products', product);
+    resetForm(true);                         // คงชื่อผู้รายงาน + Product ไว้ให้ชั่วโมงถัดไป
+    toast('รับรายการแล้ว '+item.time+' — กำลังส่งเบื้องหลัง ทำรายการต่อได้เลย','ok');
+    window.scrollTo(0,0);
+    drawQ(); pump();
+  }catch(e){ toast(errMsg(e),'err'); }
+  finally{ S.saving=false; }
+};
+
+/* ============================================================
+ *  คิวส่งเบื้องหลัง — เก็บในเครื่อง (IndexedDB) ปิดแอป/เน็ตหลุดแล้วเปิดใหม่ ส่งต่อให้เอง
+ * ============================================================ */
+const Q={ items:[], running:0, max:2, maxTries:4, db:null, dbP:null, hideT:0 };
+function dbReady(){
+  return Q.dbP || (Q.dbP=new Promise(res=>{
+    try{
+      const r=indexedDB.open('smc_qc',1);
+      r.onupgradeneeded=()=>{ const db=r.result; if(!db.objectStoreNames.contains('queue')) db.createObjectStore('queue',{ keyPath:'qid' }); };
+      r.onsuccess=()=>{ Q.db=r.result; res(Q.db); }; r.onerror=()=>res(null); r.onblocked=()=>res(null);
+    }catch(e){ res(null); }
+  }));
+}
+function idb(mode, fn){
+  return dbReady().then(db=>new Promise(res=>{
+    if(!db) return res(null);
+    try{ const tx=db.transaction('queue',mode), req=fn(tx.objectStore('queue')); tx.oncomplete=()=>res(req&&req.result); tx.onerror=()=>res(null); }catch(e){ res(null); }
+  }));
+}
+function qSave(it){
+  return idb('readwrite', st=>st.put({ qid:it.qid, createdAt:it.createdAt, status:it.status==='error'?'error':'pending', tries:it.tries, error:it.error,
+    line:it.line, product:it.product, reporter:it.reporter, time:it.time, thumb:it.thumb, payload:it.payload }));
+}
+function qRemove(qid){ return idb('readwrite', st=>st.delete(qid)); }
+async function qRestore(){
+  const saved=(await idb('readonly', st=>st.getAll()))||[];
+  if(!saved.length) return;
+  saved.sort((a,b)=>a.createdAt-b.createdAt).forEach(x=>{ if(!Q.items.some(y=>y.qid===x.qid)) Q.items.push(x); });
+  const n=saved.filter(x=>x.status!=='error').length;
+  if(n) toast('มี '+n+' รายการค้างส่ง กำลังส่งต่อให้อัตโนมัติ');
+  drawQ(); pump();
+}
+const qActive=()=>Q.items.filter(x=>x.status==='pending'||x.status==='uploading'||x.status==='waiting').length;
+function pump(){
+  while(Q.running<Q.max){
+    const it=Q.items.find(x=>x.status==='pending');
+    if(!it) break;
+    if(!navigator.onLine) break;
+    upload(it);
+  }
+  drawQ();
+}
+async function upload(it){
+  it.status='uploading'; Q.running++; drawQ();
+  const t0=Date.now();
+  try{
+    const res=await run('saveRecord', it.payload);
+    it.status='done'; it.sec=Math.round((Date.now()-t0)/100)/10; it.payload=null; it.error='';
+    it.result=res;
+    qRemove(it.qid);
+    S.cache={};                              // Dashboard ต้องโหลดใหม่
+  }catch(e){
+    const msg=errMsg(e);
+    it.error=msg;
+    const net=!navigator.onLine || /network|NetworkError|failed to fetch|timeout|timed out|ไม่สามารถ|ขัดข้อง/i.test(msg);
+    const bad=/^(กรุณา|ไม่พบไลน์|แนบรูปได้|รูปที่ |ข้อมูลไม่ถูกต้อง|ไม่พบฟังก์ชัน)/.test(msg);   // ข้อมูลผิด → ส่งซ้ำก็ไม่ผ่าน
+    if(!net) it.tries++;
+    if(bad || it.tries>=Q.maxTries){ it.status='error'; toast('ส่ง "'+it.product+'" ไม่สำเร็จ: '+msg,'err'); }
+    else{ it.status='waiting'; setTimeout(()=>{ if(it.status==='waiting'){ it.status='pending'; pump(); } }, 3000*Math.max(1,it.tries)); }
+    qSave(it);
+  }finally{
+    Q.running--;
+    pump();
+  }
+}
+function drawQ(){
+  const pill=$('#qPill'), act=qActive(), err=Q.items.filter(x=>x.status==='error').length, done=Q.items.filter(x=>x.status==='done').length;
+  clearTimeout(Q.hideT);
+  if(!act && !err && !done){ pill.hidden=true; }
+  else{
+    pill.hidden=false;
+    pill.className='qpill'+(err?' err':(!act?' ok':''));
+    pill.innerHTML = act ? '<span class="spin sm"></span>กำลังส่ง '+act+' รายการ'+(navigator.onLine?'':' (รอสัญญาณ)')
+      : err ? ic('alert')+'ส่งไม่สำเร็จ '+err+' รายการ — แตะเพื่อดู'
+      : ic('check')+'ส่งครบแล้ว '+done+' รายการ';
+    if(!act && !err){ Q.hideT=setTimeout(()=>{ Q.items=Q.items.filter(x=>x.status!=='done'); drawQ(); }, 5000); }
+  }
+  if(!$('#qSheet').hidden) drawQSheet();
+}
+function qStatus(x){
+  return x.status==='uploading'?'<span class="badge b-blue">กำลังส่ง…</span>'
+    : x.status==='pending'?'<span class="badge b-gray">รอคิว</span>'
+    : x.status==='waiting'?'<span class="badge b-hold">รอลองใหม่</span>'
+    : x.status==='done'?'<span class="badge b-pass">สำเร็จ</span>'
+    : '<span class="badge b-red">ไม่สำเร็จ</span>';
+}
+function drawQSheet(){
+  const list=Q.items.slice().reverse();
+  $('#qBody').innerHTML=list.length ? list.map(x=>
+    '<div class="qi"><div class="qth">'+(x.thumb?'<img src="'+x.thumb+'" alt="">':ic('clip'))+'</div>'+
+    '<div class="qb"><div class="qn">'+esc(x.product)+'</div><div class="qm">'+esc(x.line)+' · '+esc(x.time)+' · '+esc(x.reporter)+(x.sec?' · '+x.sec+' วิ':'')+'</div>'+
+      (x.error && x.status!=='done'?'<div class="qe">'+esc(x.error)+'</div>':'')+'</div>'+
+    '<div class="qr">'+qStatus(x)+(x.status==='error'?'<div class="qa"><button class="btn sm" type="button" data-retry="'+x.qid+'">'+ic('refresh')+'ส่งใหม่</button><button class="btn sm" type="button" data-drop="'+x.qid+'" aria-label="ทิ้งรายการ">'+ic('x')+'</button></div>':'')+'</div></div>'
+  ).join('') : '<div class="empty">ไม่มีรายการในคิว</div>';
+}
+function openQSheet(){ $('#qSheet').hidden=false; drawQSheet(); }
+$('#qPill').onclick=openQSheet;
+$('#qSheet').addEventListener('click', e=>{
+  if(e.target===$('#qSheet') || e.target.closest('[data-qclose]')){ $('#qSheet').hidden=true; return; }
+  const r=e.target.closest('[data-retry]');
+  if(r){ const it=Q.items.find(q=>q.qid===r.dataset.retry); if(it){ it.status='pending'; it.tries=0; it.error=''; qSave(it); pump(); } return; }
+  const d=e.target.closest('[data-drop]');
+  if(d){ const it=Q.items.find(q=>q.qid===d.dataset.drop);
+    if(it && confirm('ทิ้งรายการ "'+it.product+'"? รายการนี้จะไม่ถูกบันทึก')){ Q.items=Q.items.filter(q=>q!==it); qRemove(it.qid); drawQ(); } }
+});
+addEventListener('online', pump);
+addEventListener('offline', drawQ);
+addEventListener('beforeunload', e=>{ if(qActive()){ e.preventDefault(); e.returnValue=''; } });
+
+/* ============================================================
+ *  SUPERVISOR: เข้าสู่ระบบ
+ * ============================================================ */
+$('#gateIco').innerHTML=ic('shield');
+$('#btnPin').innerHTML=ic('lock')+'เข้าสู่ระบบ';
+function renderGate(){ $('#pin').value=''; setTimeout(()=>$('#pin').focus(),50); }
+async function login(){
+  const pin=$('#pin').value.trim();
+  if(!pin){ $('#pin').focus(); return; }
+  $('#btnPin').disabled=true;
+  try{
+    const r=await run('supervisorLogin', pin);
+    setToken(r.token);
+    toast('เข้าสู่ระบบ QC Supervisor แล้ว','ok');
+    const to=S.after||'dash'; S.after='dash';
+    go(to,{replace:true});
+  }catch(e){ toast(errMsg(e),'err'); $('#pin').value=''; $('#pin').focus(); }
+  finally{ $('#btnPin').disabled=false; }
+}
+$('#btnPin').onclick=login;
+$('#pin').addEventListener('keydown', e=>{ if(e.key==='Enter') login(); });
+
+/* ============================================================
+ *  SUPERVISOR: ตัวกรองหลัก + เจาะลึก (drill-down)
+ * ============================================================ */
+function periodRange(){
+  const t=isoDate(now()), k=S.period;
+  if(k==='today') return [t,t];
+  if(k==='7d') return [addDays(t,-6),t];
+  if(k==='30d') return [addDays(t,-29),t];
+  if(k==='month') return [t.slice(0,8)+'01',t];
+  return [$('#rFrom').value||t, $('#rTo').value||t];
+}
+function buildBase(){
+  const [from,to]=periodRange();
+  return { from, to, line:$('#rLine').value };
+}
+function drawPeriod(){
+  $('#pChips').innerHTML=PERIODS.map(p=>'<button type="button" class="chip'+(S.period===p[0]?' on':'')+'" data-k="'+p[0]+'">'+p[1]+'</button>').join('');
+  $('#pCustom').hidden=S.period!=='custom';
+}
+$('#pChips').addEventListener('click', e=>{
+  const b=e.target.closest('[data-k]'); if(!b) return;
+  S.period=b.dataset.k; drawPeriod();
+  if(S.period==='custom'){ const t=isoDate(now()); if(!$('#rFrom').value){ $('#rFrom').value=addDays(t,-6); $('#rTo').value=t; } return; }
+  resetSup();
+});
+$('#pApply').onclick=()=>{
+  const f=$('#rFrom').value, t=$('#rTo').value;
+  if(!f||!t){ toast('กรุณาเลือกวันที่','err'); return; }
+  if(f>t){ toast('วันที่เริ่มต้นต้องไม่เกินวันที่สิ้นสุด','err'); return; }
+  resetSup();
+};
+$('#rLine').addEventListener('change', resetSup);
+function resetSup(){ S.base=buildBase(); S.drill=[]; S.page=1; hist('replace'); saveUI(); fetchSup(); }
+
+function effFilter(){
+  const f=Object.assign({ product:'', reporter:'', date:'', hour:'', flags:[] }, S.base);
+  f.flags=[];
+  S.drill.forEach(s=>{ if(s.k==='flag') f.flags.push(s.v); else f[s.k]=s.v; });
+  return f;
+}
+async function fetchSup(){
+  if(!S.base) S.base=buildBase();
+  const f=effFilter(), key=JSON.stringify(f), my=++S.req;
+  hideTip();
+  if(S.cache[key]){ S.res=S.cache[key]; drawSup(); return; }
+  $('#supBody').classList.add('busy');
+  if(!S.res) $('#charts').innerHTML=spinner('กำลังคำนวณภาพรวม…');
+  try{
+    const res=await supCall('getSupervisorData', f);
+    S.cache[key]=res;
+    if(my===S.req){ S.res=res; drawSup(); }
+  }catch(e){ if(errMsg(e)!=='SESSION_EXPIRED') toast(errMsg(e),'err'); }
+  finally{ if(my===S.req) $('#supBody').classList.remove('busy'); }
+}
+const fam=v=>v.replace(/^no/,'').toLowerCase();
+function drill(k, v, label){
+  const cur=effFilter();
+  if(k==='flag'){ if(cur.flags.includes(v)) return; S.drill=S.drill.filter(s=>!(s.k==='flag' && fam(s.v)===fam(v))); }
+  else if(cur[k]===v) return;
+  S.drill.push({ k, v, label }); S.page=1;
+  hist('push'); refreshBack(); saveUI();
+  fetchSup();
+  const bar=$('#drillBar'); if(bar.getBoundingClientRect().top<70) bar.scrollIntoView({ behavior:'smooth', block:'start' });
+}
+function drillTo(n){ S.drill=S.drill.slice(0,n); S.page=1; hist('replace'); refreshBack(); saveUI(); fetchSup(); }
+function refreshBack(){ const b=canBack(); $('#btnBack').hidden=!b; $('#topLogo').style.display=b?'none':''; }
+
+function renderSup(arg, name){
+  S.pane=name==='list'?'list':'dash';
+  $('#topAct').innerHTML='<button class="btn sm" type="button" id="aRefresh">'+ic('refresh')+'<span class="hide-sm">รีเฟรช</span></button><button class="btn sm hide-sm" type="button" id="aPrint">'+ic('print')+'พิมพ์</button>';
+  $('#aRefresh').onclick=()=>{ S.cache={}; fetchSup(); };
+  $('#aPrint').onclick=()=>window.print();
+  drawPeriod();
+  $('#paneDash').hidden=S.pane!=='dash'; $('#paneList').hidden=S.pane!=='list';
+  if(!S.base || !S.res) fetchSup(); else drawSup();
+}
+function drawSup(){
+  const res=S.res; if(!res) return;
+  const f=res.filter, deep=S.drill.length>0;
+  $('#rangeTxt').textContent='ช่วงข้อมูล: '+thDate(f.from)+(f.to!==f.from?' – '+thDate(f.to):'')+' · '+(S.base.line||'ทุกไลน์')+' · '+res.total+' รายการ';
+  const steps=[{ label:'ภาพรวม' }].concat(S.drill);
+  $('#drillBar').innerHTML=
+    (deep?'<button class="btn sm" type="button" data-back>'+ic('back')+'ย้อนกลับ</button>':'')+
+    '<div class="crumbs">'+steps.map((s,i)=>(i?'<span class="sep">›</span>':'')+'<button type="button" data-to="'+i+'" class="'+(i===steps.length-1?'cur':'')+'">'+esc(s.label)+'</button>').join('')+'</div>'+
+    (S.pane==='dash'
+      ? (res.total?'<button class="btn sm dark" type="button" data-pane="list">'+ic('list')+'ดูรายการ ('+res.total+')</button>':'')
+      : '<button class="btn sm dark" type="button" data-pane="dash">'+ic('chart')+'ดูกราฟ</button>')+
+    '<div class="hint">'+(S.pane==='dash'
+      ? (deep?'แตะกราฟหรือการ์ดเพื่อเจาะลึกต่อ · แตะชื่อขั้นเพื่อย้อนกลับ':'แตะแท่งกราฟ จุดบนกราฟ วงแหวน หรือการ์ดตัวเลข เพื่อเจาะลึกทีละขั้น')
+      : 'แตะรายการเพื่อดูรายละเอียด · แตะรูปเพื่อดูรูปใหญ่')+'</div>';
+  if(S.pane==='dash') drawDash(res); else drawList(res);
+}
+$('#drillBar').addEventListener('click', e=>{
+  if(e.target.closest('[data-back]')){ drillTo(S.drill.length-1); return; }
+  const t=e.target.closest('[data-to]'); if(t && !t.classList.contains('cur')){ drillTo(+t.dataset.to); return; }
+  const p=e.target.closest('[data-pane]'); if(p) go(p.dataset.pane,{replace:true});
+});
+
+/* ============================================================
+ *  SUPERVISOR: Dashboard
+ * ============================================================ */
+const touchUI=matchMedia('(hover: none)').matches;
+function showTip(e,label,value,more){
+  const t=$('#tip');
+  t.innerHTML=esc(label)+' · <b>'+esc(value)+' รายการ</b>'+(more?'<small>คลิกเพื่อเจาะลึก</small>':'');
+  t.hidden=false;
+  const x=Math.min(e.clientX+12, innerWidth-t.offsetWidth-8), y=e.clientY-t.offsetHeight-10;
+  t.style.left=Math.max(8,x)+'px'; t.style.top=(y<8?e.clientY+16:y)+'px';
+}
+function hideTip(){ $('#tip').hidden=true; }
+/** hover = แสดงค่า · คลิก/แตะ = เจาะลึก */
+function bindPick(node,label,value,onPick){
+  const can=!!(onPick && value);
+  if(can){
+    node.classList.add('pick'); node.setAttribute('tabindex','0'); node.setAttribute('role','button');
+    node.setAttribute('aria-label', label+' '+value+' รายการ');
+    node.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); onPick(); } });
+  }
+  if(!touchUI){ node.addEventListener('mousemove', e=>showTip(e,label,value,can)); node.addEventListener('mouseleave', hideTip); }
+  node.addEventListener('click', e=>{ if(can){ hideTip(); onPick(); } else showTip(e,label,value,false); });
+}
+function el(html){ const d=document.createElement('div'); d.innerHTML=html.trim(); return d.firstChild; }
+function chartCard(title, sub, icon, color, span2, id){
+  return el('<section class="card'+(span2?' span2':'')+'"'+(id?' id="'+id+'"':'')+'><div class="card-h"><h3><span class="cic" style="--c:'+color+'">'+ic(icon)+'</span>'+esc(title)+'</h3></div><div class="muted" style="font-size:12.5px;margin:-8px 0 12px">'+esc(sub)+'</div></section>');
+}
+function hbars(items, color, onPick){
+  const max=Math.max(1,...items.map(x=>x.value));
+  const box=document.createElement('div'); box.style.setProperty('--c',color);
+  items.forEach(it=>{
+    const r=el('<div class="hrow'+(it.value?'':' zero')+'"><div class="lab" title="'+esc(it.label)+'">'+esc(it.label)+'</div><div class="track"><div class="fill" style="width:'+(it.value/max*100)+'%"></div></div><div class="val">'+it.value+'</div></div>');
+    bindPick(r, it.label, it.value, onPick?()=>onPick(it):null);
+    box.appendChild(r);
+  });
+  return box;
+}
+const SVGNS='http://www.w3.org/2000/svg';
+function sv(tag, a, kids){
+  const n=document.createElementNS(SVGNS, tag);
+  Object.keys(a||{}).forEach(k=>{ if(k==='text') n.textContent=a[k]; else n.setAttribute(k,a[k]); });
+  (kids||[]).forEach(c=>c&&n.appendChild(c));
+  return n;
+}
+function niceMax(v){
+  if(v<=4) return 4;
+  const p=Math.pow(10,Math.floor(Math.log10(v))), n=v/p;
+  const m=(n<=1?1:n<=2?2:n<=4?4:n<=5?5:n<=8?8:10)*p;
+  return m%2?m+1:m;
+}
+let gid=0;
+/** กราฟ SVG: 'area' (แนวโน้ม) / 'bar' (แท่ง) — วาดตามความกว้างจริง */
+function svgChart(items, opt){
+  const box=document.createElement('div'); box.className='svgbox';
+  const W=Math.max(280,Math.min(1100,opt.width)), H=210, L=30, R=10, T=20, B=26, pw=W-L-R, ph=H-T-B;
+  const max=niceMax(Math.max(...items.map(x=>x.value))), n=items.length, step=pw/n;
+  const X=i=>L+step*(i+.5), Y=v=>T+ph-v/max*ph, id='g'+(++gid);
+  const s=sv('svg',{ viewBox:'0 0 '+W+' '+H, role:'img', 'aria-label':opt.title });
+  s.appendChild(sv('defs',null,[sv('linearGradient',{ id, x1:0, y1:0, x2:0, y2:1 },[
+    sv('stop',{ offset:'0', 'stop-color':opt.color, 'stop-opacity':'.30' }), sv('stop',{ offset:'1', 'stop-color':opt.color, 'stop-opacity':'.02' }) ])]));
+  const hits=items.map((it,i)=>{ const h=sv('rect',{ class:'hit', x:L+step*i, y:T, width:step, height:ph, fill:'transparent' }); s.appendChild(h); return h; });
+  [0,.5,1].forEach(k=>{
+    const y=T+ph-k*ph;
+    s.appendChild(sv('line',{ x1:L, x2:W-R, y1:y, y2:y, stroke:k?'#EFECE6':'#CFCAC0', 'stroke-width':1, 'pointer-events':'none' }));
+    s.appendChild(sv('text',{ x:L-6, y:y+4, 'text-anchor':'end', 'font-size':11, fill:'#8B8892', text:String(Math.round(max*k)) }));
+  });
+  const every=Math.max(1,Math.ceil(n/Math.floor(pw/46)));
+  items.forEach((it,i)=>{ if(i%every===0) s.appendChild(sv('text',{ x:X(i), y:H-8, 'text-anchor':'middle', 'font-size':11, fill:'#8B8892', text:it.label })); });
+  const showVal=step>=26, g=sv('g',{ 'pointer-events':'none' });
+  if(opt.type==='area'){
+    const pts=items.map((it,i)=>X(i)+','+Y(it.value));
+    g.appendChild(sv('path',{ d:'M'+X(0)+','+(T+ph)+' L'+pts.join(' L')+' L'+X(n-1)+','+(T+ph)+' Z', fill:'url(#'+id+')' }));
+    g.appendChild(sv('path',{ d:'M'+pts.join(' L'), fill:'none', stroke:opt.color, 'stroke-width':2, 'stroke-linejoin':'round', 'stroke-linecap':'round' }));
+    items.forEach((it,i)=>{
+      if(n<=45) g.appendChild(sv('circle',{ cx:X(i), cy:Y(it.value), r:4, fill:opt.color, stroke:'#fff', 'stroke-width':2 }));
+      if(showVal && it.value) g.appendChild(sv('text',{ x:X(i), y:Y(it.value)-9, 'text-anchor':'middle', 'font-size':11, 'font-weight':600, fill:'#1D1B20', text:String(it.value) }));
+    });
+  }else{
+    const bw=Math.min(38,Math.max(2,step-2));
+    items.forEach((it,i)=>{
+      if(!it.value) return;
+      const y=Y(it.value), h=T+ph-y, r=Math.min(4,bw/2,h);
+      g.appendChild(sv('path',{ fill:opt.color, d:'M'+(X(i)-bw/2)+','+(T+ph)+' v'+(-(h-r))+' q0,'+(-r)+' '+r+','+(-r)+' h'+(bw-2*r)+' q'+r+',0 '+r+','+r+' v'+(h-r)+' z' }));
+      if(showVal) g.appendChild(sv('text',{ x:X(i), y:y-5, 'text-anchor':'middle', 'font-size':11, 'font-weight':600, fill:'#1D1B20', text:String(it.value) }));
+    });
+  }
+  s.appendChild(g);
+  items.forEach((it,i)=>bindPick(hits[i], it.tip||it.label, it.value, opt.onPick?()=>opt.onPick(it):null));
+  box.appendChild(s);
+  return box;
+}
+/** วงแหวน: แตะส่วนสี = posFlag, ส่วนเทา = negFlag */
+function donut(title, part, total, color, labA, labB, posFlag, negFlag){
+  const r=40, Cc=2*Math.PI*r, frac=total?part/total:0;
+  const s=sv('svg',{ viewBox:'0 0 110 110', role:'img', 'aria-label':title });
+  const bg=sv('circle',{ cx:55, cy:55, r, fill:'none', stroke:C.rest, 'stroke-width':16, class:'dseg' }); s.appendChild(bg);
+  let fg=null;
+  if(frac>0){ fg=sv('circle',{ cx:55, cy:55, r, fill:'none', stroke:color, 'stroke-width':16, class:'dseg', 'stroke-dasharray':(frac*Cc)+' '+Cc, transform:'rotate(-90 55 55)' }); s.appendChild(fg); }
+  s.appendChild(sv('text',{ x:55, y:54, 'text-anchor':'middle', 'font-size':21, 'font-weight':700, fill:'#1D1B20', text:Math.round(frac*100)+'%', 'pointer-events':'none' }));
+  s.appendChild(sv('text',{ x:55, y:70, 'text-anchor':'middle', 'font-size':10, fill:'#8B8892', text:part+'/'+total, 'pointer-events':'none' }));
+  const pA=()=>drill('flag',posFlag,FLAG_LABEL[posFlag]), pB=()=>drill('flag',negFlag,FLAG_LABEL[negFlag]);
+  if(fg) bindPick(fg,labA,part,pA);
+  bindPick(bg,labB,total-part,pB);
+  const d=el('<div class="donut"><div class="dt">'+esc(title)+'</div><div class="dl"></div></div>');
+  d.insertBefore(s,d.firstChild);
+  [[color,labA,part,pA],[C.rest,labB,total-part,pB]].forEach(([c,t,n,p])=>{
+    const b=el('<button type="button" class="lg"><i style="background:'+c+'"></i>'+esc(t)+' '+n+'</button>');
+    if(n) b.onclick=p; else b.disabled=true;
+    d.querySelector('.dl').appendChild(b);
+  });
+  return d;
+}
+function stat(o){
+  const can=!!(o.pick && o.value);
+  const n=el('<'+(can?'button type="button"':'div')+' class="stat'+(o.first?' first':'')+'" style="--k:'+o.color+';--kb:'+o.bg+'">'+
+    '<span class="ico">'+ic(o.icon)+'</span><div class="v">'+o.value+'</div><div class="l">'+esc(o.label)+'</div>'+
+    (o.sub?'<div class="s">'+esc(o.sub)+'</div>':'')+(can?'<span class="go">'+esc(o.go||'ดูต่อ ›')+'</span>':'')+'</'+(can?'button':'div')+'>');
+  if(can) n.onclick=o.pick;
+  return n;
+}
+const pct=(n,t)=>t?Math.round(n/t*100)+'% ของทั้งหมด':'';
+function drawDash(res){
+  const f=res.filter, k=res.kpi, has=x=>f.flags.includes(x), hasFam=x=>f.flags.some(v=>fam(v)===x);
+  const kp=$('#kpis'), ch=$('#charts'); kp.innerHTML=''; ch.innerHTML='';
+  kp.appendChild(stat({ label:'รายการทั้งหมด', value:k.total, icon:'list', color:C.blue, bg:'var(--blue-50)', first:true, go:'ดูรายการ ›', pick:()=>go('list',{replace:true}) }));
+  kp.appendChild(stat({ label:'ไลน์ที่มีรายงาน', value:k.linesActive, sub:'จาก '+k.linesTotal+' ไลน์', icon:'factory', color:C.teal, bg:'var(--teal-50)', go:'เลือกไลน์ ›',
+    pick:f.line?null:()=>{ const c=$('#chLine'); if(c){ c.scrollIntoView({ behavior:'smooth', block:'center' }); c.classList.remove('flash'); void c.offsetWidth; c.classList.add('flash'); } } }));
+  kp.appendChild(stat({ label:'สุ่มเพิ่ม', value:k.extra, sub:pct(k.extra,k.total), icon:'search', color:C.violet, bg:'var(--violet-50)', pick:has('extra')?null:()=>drill('flag','extra',FLAG_LABEL.extra) }));
+  kp.appendChild(stat({ label:'มีรูปแนบ', value:k.withPhoto, sub:pct(k.withPhoto,k.total), icon:'camera', color:C.green, bg:'var(--green-50)', pick:has('photo')?null:()=>drill('flag','photo',FLAG_LABEL.photo) }));
+  kp.appendChild(stat({ label:'ยังไม่ระบุการแก้ไข', value:k.noAction, sub:pct(k.noAction,k.total), icon:'wrench', color:C.amber, bg:'var(--amber-50)', pick:has('noAction')?null:()=>drill('flag','noAction',FLAG_LABEL.noAction) }));
+
+  if(!k.total){ ch.innerHTML='<div class="card span2"><div class="empty">ไม่พบรายการตามเงื่อนไขที่เลือก</div></div>'; return; }
+  const W=(ch.clientWidth||600)-34;
+  if(!f.date && res.byDate.length>1){
+    const c=chartCard('แนวโน้มรายวัน','จำนวนรายการต่อวัน · แตะจุดเพื่อดูวันนั้น','trend',C.red,true);
+    c.appendChild(svgChart(res.byDate.map(d=>({ key:d.label, label:shortDate(d.label), tip:thDate(d.label), value:d.value })),
+      { type:'area', color:C.red, width:W, title:'แนวโน้มรายวัน', onPick:it=>drill('date',it.key,'วันที่ '+it.tip) }));
+    ch.appendChild(c);
+  }
+  if(!f.line){
+    const c=chartCard('ตามไลน์ผลิต','เรียงจากมากไปน้อย · แตะแท่งเพื่อดูไลน์นั้น','factory',C.blue,false,'chLine');
+    c.appendChild(hbars(res.byLine.slice().sort((a,b)=>b.value-a.value), C.blue, it=>drill('line',it.label,it.label)));
+    ch.appendChild(c);
+  }
+  const dn=[];
+  if(!hasFam('action')) dn.push(donut('ระบุการแก้ไข',k.total-k.noAction,k.total,C.green,'ระบุแล้ว','ยังไม่ระบุ','action','noAction'));
+  if(!hasFam('extra')) dn.push(donut('สุ่มเพิ่ม',k.extra,k.total,C.violet,'สุ่มเพิ่ม','ไม่สุ่ม','extra','noExtra'));
+  if(!hasFam('photo')) dn.push(donut('มีรูปแนบ',k.withPhoto,k.total,C.blue,'มีรูป','ไม่มีรูป','photo','noPhoto'));
+  if(dn.length){
+    const c=chartCard('สัดส่วนรายการ','แตะส่วนของวงแหวนเพื่อดูกลุ่มนั้น','pie',C.violet);
+    const g=el('<div class="donuts" style="grid-template-columns:repeat('+dn.length+',1fr)"></div>'); dn.forEach(x=>g.appendChild(x));
+    c.appendChild(g); ch.appendChild(c);
+  }
+  if(!f.product){
+    const c=chartCard('Product ที่ถูกรายงานมากที่สุด',(res.productCount>res.byProduct.length?'แสดง '+res.byProduct.length+' อันดับแรก จาก '+res.productCount+' Product':'ทั้งหมด '+res.productCount+' Product')+' · แตะเพื่อดูต่อ','package',C.amber);
+    c.appendChild(hbars(res.byProduct, C.amber, it=>drill('product',it.label,'Product: '+it.label)));
+    ch.appendChild(c);
+  }
+  if(!f.reporter){
+    const c=chartCard('ตามผู้รายงาน',(res.reporterCount>res.byReporter.length?'แสดง '+res.byReporter.length+' อันดับแรก จาก '+res.reporterCount+' คน':'ทั้งหมด '+res.reporterCount+' คน')+' · แตะเพื่อดูต่อ','user',C.green);
+    c.appendChild(hbars(res.byReporter.map(x=>({ key:x.label, label:x.label===NO_REPORTER?'ไม่ระบุ':x.label, value:x.value })), C.green, it=>drill('reporter',it.key,'ผู้รายงาน: '+it.label)));
+    ch.appendChild(c);
+  }
+  if(f.hour===''){
+    let a=0, b=23; while(a<23 && !res.byHour[a]) a++; while(b>a && !res.byHour[b]) b--;
+    const hours=[]; for(let h=a;h<=b;h++){ const hh=String(h).padStart(2,'0'); hours.push({ key:h, label:hh+':00', tip:'ช่วง '+hh+':00–'+hh+':59', value:res.byHour[h] }); }
+    const c=chartCard('ตามชั่วโมงที่บันทึก','รวมทุกวันในช่วงที่เลือก · แตะแท่งเพื่อดูชั่วโมงนั้น','clock',C.teal,true);
+    c.appendChild(svgChart(hours,{ type:'bar', color:C.teal, width:W, title:'ตามชั่วโมง', onPick:it=>drill('hour',it.key,it.tip) }));
+    ch.appendChild(c);
+  }
+  if(!ch.children.length){
+    const c=el('<div class="card span2" style="text-align:center"><p>เจาะลึกครบทุกมิติแล้ว เหลือ '+k.total+' รายการ</p><button class="btn primary" type="button">'+ic('list')+'ดูรายการ</button></div>');
+    c.querySelector('button').onclick=()=>go('list',{replace:true}); ch.appendChild(c);
+  }
+}
+let rz;
+addEventListener('resize', ()=>{ clearTimeout(rz); rz=setTimeout(()=>{ if(S.route==='dash' && S.res) drawDash(S.res); },200); });
+
+/* ============================================================
+ *  SUPERVISOR: รายการละเอียด
+ * ============================================================ */
+function rowBadges(r){
+  return (r.extraSample?'<span class="badge b-violet">สุ่มเพิ่ม</span>':'')+
+    (r.action.trim()?'':'<span class="badge b-hold">ยังไม่ระบุการแก้ไข</span>')+
+    (r.fileIds.length?'<span class="badge b-blue">'+ic('camera').replace('class="i"','class="i" style="width:13px;height:13px"')+r.fileIds.length+'</span>':'');
+}
+function thumbBox(id, cls, extra){
+  const d=TH.cache[id];
+  return '<div class="'+cls+(d===undefined?' ld':'')+'" data-th="'+esc(id)+'">'+(d?'<img src="'+d+'" alt="รูป Defect">':ic('image'))+(extra||'')+'</div>';
+}
+function drawList(res){
+  const box=$('#paneList');
+  if(!res.rows.length){ box.innerHTML='<div class="card"><div class="empty">ไม่พบรายการตามเงื่อนไขที่เลือก</div></div>'; return; }
+  const pages=Math.max(1,Math.ceil(res.rows.length/PAGE_SIZE));
+  if(S.page>pages) S.page=pages;
+  const start=(S.page-1)*PAGE_SIZE, slice=res.rows.slice(start,start+PAGE_SIZE);
+  box.innerHTML=(res.truncated?'<div class="card" style="font-size:13px;color:var(--amber);background:var(--amber-50)">แสดง '+res.rows.length+' รายการล่าสุด จากทั้งหมด '+res.total+' รายการ — เจาะลึกหรือเลือกช่วงวันที่ให้แคบลง (Dashboard นับครบทุกรายการ)</div>':'')+
+    '<div class="ilist">'+slice.map((r,j)=>{
+      const i=start+j, ids=r.fileIds, more=ids.length>4?'<span class="more">+'+(ids.length-3)+'</span>':'';
+      return '<div class="item" data-i="'+i+'" tabindex="0" role="button">'+
+        '<div class="p">'+esc(r.product)+'</div><div class="id">'+esc(r.line)+' · '+esc(thDate(r.date))+' '+esc(r.time.slice(0,5))+' · ช่วง '+esc(r.hourSlot)+'</div>'+
+        (rowBadges(r)?'<div class="bd">'+rowBadges(r)+'</div>':'')+
+        '<div class="pr">'+esc(r.problem)+'</div>'+
+        '<div class="m"><span>ผู้รายงาน: '+esc(r.reporter||'ไม่ระบุ')+'</span><span>การแก้ไข: '+esc(r.action||'-')+'</span></div>'+
+        (ids.length?'<div class="istrip">'+ids.slice(0,ids.length>4?3:4).map((id,k)=>thumbBox(id,'pth',k===2&&more?more:'')).join('')+'</div>':'')+
+      '</div>';
+    }).join('')+'</div>'+
+    (pages>1?'<div class="pager"><button class="btn sm" type="button" data-pg="-1"'+(S.page<=1?' disabled':'')+'>‹ ก่อนหน้า</button><span class="muted">หน้า '+S.page+' / '+pages+'</span><button class="btn sm" type="button" data-pg="1"'+(S.page>=pages?' disabled':'')+'>ถัดไป ›</button></div>':'');
+  observeThumbs(box);
+}
+$('#paneList').addEventListener('click', e=>{
+  const pg=e.target.closest('[data-pg]'); if(pg){ if(!pg.disabled){ S.page+=+pg.dataset.pg; saveUI(); drawList(S.res); window.scrollTo(0,0); } return; }
+  const it=e.target.closest('.item'); if(!it) return;
+  const th=e.target.closest('[data-th]');
+  const r=S.res.rows[+it.dataset.i];
+  if(th){ const k=r.fileIds.indexOf(th.dataset.th); photoBox(r.fileIds, Math.max(0,k)); return; }
+  go('detail:'+r.id);
+});
+$('#paneList').addEventListener('keydown', e=>{ if(e.key==='Enter'){ const it=e.target.closest('.item'); if(it) go('detail:'+S.res.rows[+it.dataset.i].id); } });
+
+/* ============================================================
+ *  SUPERVISOR: รายละเอียด 1 รายการ
+ * ============================================================ */
+function renderDetail(arg){
+  const v=$('#vDetail'), rows=S.res?S.res.rows:[], i=rows.findIndex(x=>x.id===arg), r=rows[i];
+  if(!r){
+    if(!S.res && S.token){                   // เพิ่งรีเฟรช → โหลดข้อมูลก่อน แล้วค่อยแสดงรายการนี้
+      v.innerHTML='<div class="page">'+spinner()+'</div>';
+      fetchSup().then(()=>{ if(S.route==='detail:'+arg) renderDetail(arg); });
+      return;
+    }
+    go('list',{replace:true}); return;
+  }
+  const f=S.res.filter;
+  $('#pageTitle').textContent=r.product;
+  const kv=a=>a.map(x=>'<dt>'+esc(x[0])+'</dt><dd>'+esc(x[1])+'</dd>').join('');
+  const chips=[];
+  const chip=(t,k,val,label)=>chips.push('<button type="button" data-k="'+k+'" data-v="'+esc(val)+'" data-l="'+esc(label)+'">'+esc(t)+' ›</button>');
+  if(!f.line) chip('ทุกรายการของ '+r.line,'line',r.line,r.line);
+  if(!f.product) chip('ทุกรายการของ '+r.product.trim(),'product',r.product.trim(),'Product: '+r.product.trim());
+  if(!f.reporter) chip('ทุกรายการของ '+(r.reporter||'ไม่ระบุ'),'reporter',r.reporter.trim()||NO_REPORTER,'ผู้รายงาน: '+(r.reporter||'ไม่ระบุ'));
+  if(!f.date && f.from!==f.to) chip('ทุกรายการวันที่ '+thDate(r.date),'date',r.date,'วันที่ '+thDate(r.date));
+  v.innerHTML='<div class="page">'+
+    '<section class="card hero"><div class="hero-top"><div><span class="badge b-wh">'+esc(r.line)+'</span><h2>'+esc(r.product)+'</h2>'+
+      '<div class="hero-sub">บันทึกเมื่อ '+esc(thDate(r.date))+' '+esc(r.time)+'</div></div>'+
+      '<div class="hero-badges">'+(r.action.trim()?'<span class="badge b-pass">ระบุการแก้ไขแล้ว</span>':'<span class="badge b-hold">ยังไม่ระบุการแก้ไข</span>')+(r.extraSample?'<span class="badge b-violet">สุ่มเพิ่ม</span>':'')+'</div></div>'+
+      '<div class="hero-kpi"><div><div class="l">ช่วงชั่วโมง</div><div class="v">'+esc(r.hourSlot)+'</div></div><div><div class="l">ผู้รายงาน</div><div class="v">'+esc(r.reporter||'ไม่ระบุ')+'</div></div>'+
+        '<div><div class="l">เวลา Login</div><div class="v">'+esc(r.loginTime||'-')+'</div></div><div><div class="l">รูปถ่าย</div><div class="v">'+r.fileIds.length+' รูป</div></div></div></section>'+
+    '<div class="cols2">'+
+      '<section class="card"><div class="card-h"><h3>'+ic('alert')+'ปัญหาและการแก้ไข</h3></div><dl class="kv">'+kv([['ปัญหาที่พบ',r.problem],['การแก้ไข',r.action||'ยังไม่ระบุ']])+'</dl></section>'+
+      '<section class="card"><div class="card-h"><h3>'+ic('search')+'การสุ่มเพิ่ม</h3></div><dl class="kv">'+kv(r.extraSample?[['สุ่มเพิ่ม','ใช่'],['ผลการสุ่มเพิ่ม',r.extraNote||'-']]:[['สุ่มเพิ่ม','ไม่ได้สุ่มเพิ่ม']])+'</dl></section>'+
+    '</div>'+
+    '<section class="card" style="margin-top:14px"><div class="card-h"><h3>'+ic('camera')+'รูปถ่าย Defect <span class="muted" style="font-weight:500">('+r.fileIds.length+')</span></h3>'+(r.fileIds.length?'<span class="sub">แตะเพื่อดูรูปใหญ่ · ซูมได้</span>':'')+'</div>'+
+      (r.fileIds.length?'<div class="ph-grid" id="dPhotos">'+r.fileIds.map(id=>thumbBox(id,'pth')).join('')+'</div>':'<div class="muted">ไม่มีรูปแนบ</div>')+'</section>'+
+    (chips.length?'<section class="card"><div class="card-h"><h3>'+ic('chart')+'เจาะลึกต่อจากรายการนี้</h3></div><div class="dchips" id="dChips">'+chips.join('')+'</div></section>':'')+
+    '<div class="dnav"><button class="btn" type="button" data-nav="-1"'+(i<=0?' disabled':'')+'>'+ic('left')+'ก่อนหน้า</button><span class="muted">'+(i+1)+' / '+rows.length+'</span><button class="btn" type="button" data-nav="1"'+(i>=rows.length-1?' disabled':'')+'>ถัดไป'+ic('right')+'</button></div>'+
+  '</div>';
+  observeThumbs(v);
+  v.onclick=e=>{
+    const th=e.target.closest('[data-th]'); if(th){ photoBox(r.fileIds, r.fileIds.indexOf(th.dataset.th)); return; }
+    const n=e.target.closest('[data-nav]'); if(n){ const t=rows[i+ +n.dataset.nav]; if(!n.disabled && t) go('detail:'+t.id,{replace:true}); return; }
+    const c=e.target.closest('#dChips [data-k]');
+    if(c){ let val=c.dataset.v; if(c.dataset.k==='hour') val=+val; go('dash',{reset:true}); drill(c.dataset.k, val, c.dataset.l); }
+  };
+}
+
+/* ============================================================
+ *  รูปย่อ (โหลดจาก Server เมื่อเลื่อนมาเห็น) + รูปเต็ม
+ * ============================================================ */
+const TH={ cache:{}, want:new Set(), inflight:new Set(), obs:null, t:0 };
+const FULL={};
+function paintThumb(id){
+  const d=TH.cache[id];
+  document.querySelectorAll('[data-th="'+id+'"]').forEach(el=>{
+    el.classList.remove('ld');
+    const old=el.querySelector(':scope > img, :scope > svg'); if(old) old.remove();
+    el.insertAdjacentHTML('afterbegin', d?'<img src="'+d+'" alt="รูป Defect">':ic('image'));
+  });
+}
+function observeThumbs(root){
+  const els=[...root.querySelectorAll('[data-th]')].filter(el=>TH.cache[el.dataset.th]===undefined);
+  if(!('IntersectionObserver' in window)){ els.forEach(el=>TH.want.add(el.dataset.th)); flushThumbs(); return; }
+  if(!TH.obs) TH.obs=new IntersectionObserver(es=>{
+    es.forEach(e=>{ if(!e.isIntersecting) return; TH.obs.unobserve(e.target); const id=e.target.dataset.th; if(TH.cache[id]===undefined) TH.want.add(id); });
+    flushThumbs();
+  },{ rootMargin:'300px' });
+  els.forEach(el=>TH.obs.observe(el));
+}
+function flushThumbs(){
+  clearTimeout(TH.t);
+  TH.t=setTimeout(()=>{
+    const ids=[...TH.want].filter(id=>TH.cache[id]===undefined && !TH.inflight.has(id)); TH.want.clear();
+    for(let i=0;i<ids.length;i+=12) loadThumbs(ids.slice(i,i+12));
+  },40);
+}
+/** ย่อรูปที่ได้มาให้เหลือ ~360px (ประหยัดหน่วยความจำเครื่อง) */
+function shrink(src, max){
+  return new Promise(res=>{
+    const im=new Image();
+    im.onload=()=>{
+      try{
+        const k=Math.min(1,(max||360)/Math.max(im.naturalWidth,im.naturalHeight));
+        if(k>=1) return res(src);
+        const c=document.createElement('canvas'); c.width=Math.round(im.naturalWidth*k); c.height=Math.round(im.naturalHeight*k);
+        c.getContext('2d').drawImage(im,0,0,c.width,c.height); res(c.toDataURL('image/jpeg',.8));
+      }catch(e){ res(src); }
+    };
+    im.onerror=()=>res(''); im.src=src;
+  });
+}
+async function loadThumbs(ids){
+  ids.forEach(id=>TH.inflight.add(id));
+  let out={};
+  try{ out=(await supCall('getThumbs', ids)).thumbs||{}; }catch(e){}
+  for(const id of ids){
+    TH.inflight.delete(id);
+    let d=out[id]||'';
+    if(d && d.length>120000){ FULL[id]=FULL[id]||d; d=await shrink(d,360); }   // ได้รูปจริงมา → เก็บเป็นรูปเต็มด้วย
+    TH.cache[id]=d; paintThumb(id);
+  }
+}
+async function loadFull(id){
+  if(FULL[id]) return FULL[id];
+  const r=await supCall('getPhoto', id);
+  FULL[id]=r.dataUrl; return r.dataUrl;
+}
+/** เปิดรูปจาก Drive (ตามลำดับ) — แสดงรูปย่อก่อน แล้วสลับเป็นรูปเต็มเมื่อโหลดเสร็จ */
+function photoBox(ids, i){ lightbox(ids.map(id=>({ id })), Math.max(0,i)); }
+
+/* ============================================================
+ *  ดูรูปใหญ่ + ซูม (จีบนิ้ว / แตะ 2 ครั้ง / ล้อเมาส์ / ลากเลื่อน / ปัดเปลี่ยนรูป)
+ * ============================================================ */
+const LB={ list:[], i:0, s:1, x:0, y:0, r:0, base:1, max:5, pts:new Map(), pinch:null, pinchUsed:false, down:null, moved:false, lastTap:0, lastXY:null, tapT:0, lastType:'', zClick:false, zPrev:false };
+function lightbox(list, i){
+  const lb=$('#lb');
+  LB.list=list; LB.i=Math.min(Math.max(0,i),list.length-1);
+  lb.classList.toggle('multi', list.length>1);
+  $('#lbCnt').hidden=list.length<2;
+  lb.querySelectorAll('.lb-nav').forEach(b=>{ b.hidden=list.length<2; });
+  lb.hidden=false; document.body.classList.add('lock');
+  hist('push', { lb:1 });                    // ให้ปุ่มย้อนกลับของมือถือ = ปิดรูป
+  $('#lbHint').textContent=matchMedia('(pointer:coarse)').matches
+    ? 'จีบนิ้วหรือแตะ 2 ครั้งเพื่อซูม · ลากเพื่อเลื่อนดู · ปัดซ้าย-ขวาเปลี่ยนรูป'
+    : 'คลิกที่รูปเพื่อซูม · ล้อเมาส์ซูมเข้า-ออก · ลากเพื่อเลื่อนดู · ← → เปลี่ยนรูป · Esc ปิด';
+  lbShow(LB.i);
+}
+function lbShow(i){
+  const n=LB.list.length; LB.i=(i+n)%n;
+  LB.s=1; LB.x=0; LB.y=0; LB.r=0; LB.base=1; LB.pts.clear(); LB.pinch=null;
+  const it=LB.list[LB.i], im=$('#lbImg');
+  $('#lbCnt').textContent=(LB.i+1)+' / '+n;
+  lbApply();
+  if(it.src){ im.src=it.src; $('#lbLoad').hidden=true; return; }
+  const id=it.id;
+  im.src=FULL[id]||TH.cache[id]||'';
+  if(FULL[id]){ $('#lbLoad').hidden=true; return; }
+  $('#lbLoad').hidden=false;
+  loadFull(id).then(d=>{ if(LB.list[LB.i]===it && !$('#lb').hidden){ im.src=d; $('#lbLoad').hidden=true; } })
+    .catch(e=>{ if(LB.list[LB.i]===it){ $('#lbLoad').hidden=true; if(errMsg(e)!=='SESSION_EXPIRED') toast('โหลดรูปไม่สำเร็จ: '+errMsg(e),'err'); } });
+  // โหลดรูปถัดไปไว้ก่อน
+  const nx=LB.list[(LB.i+1)%n]; if(nx && nx.id && !FULL[nx.id]) loadFull(nx.id).catch(()=>{});
+}
+function lbGo(d){ if(LB.list.length>1) lbShow(LB.i+d); }
+function lbClose(){ clearTimeout(LB.tapT); $('#lb').hidden=true; $('#lbImg').src=''; LB.pts.clear(); document.body.classList.remove('lock'); }
+function lbApply(anim){
+  const lb=$('#lb');
+  lb.classList.toggle('anim',!!anim);
+  $('#lbImg').style.transform='translate('+LB.x+'px,'+LB.y+'px) scale('+(LB.s*LB.base)+') rotate('+LB.r+'deg)';
+  $('#lbPct').textContent=Math.round(LB.s*100)+'%';
+  lb.classList.toggle('zoomed', LB.s>1.01);
+}
+function lbRotate(){
+  const im=$('#lbImg');
+  LB.r=(LB.r+90)%360; LB.s=1; LB.x=0; LB.y=0;
+  const w=im.offsetWidth||1, h=im.offsetHeight||1, vw=innerWidth-24, vh=innerHeight-24;
+  LB.base=LB.r%180?Math.min(1,vw/h,vh/w):1;
+  lbApply(true);
+}
+function lbClamp(){
+  const im=$('#lbImg'), k=LB.s*LB.base;
+  const sw=LB.r%180?im.offsetHeight:im.offsetWidth, sh=LB.r%180?im.offsetWidth:im.offsetHeight;
+  const mx=Math.max(0,(sw*k-innerWidth)/2), my=Math.max(0,(sh*k-innerHeight)/2);
+  LB.x=Math.min(mx,Math.max(-mx,LB.x)); LB.y=Math.min(my,Math.max(-my,LB.y));
+}
+function lbZoomAt(px,py,ns,anim){
+  ns=Math.min(LB.max,Math.max(1,ns));
+  const im=$('#lbImg'), cx=im.offsetLeft+im.offsetWidth/2, cy=im.offsetTop+im.offsetHeight/2;
+  const qx=(px-cx-LB.x)/LB.s, qy=(py-cy-LB.y)/LB.s;
+  LB.s=ns;
+  if(ns<=1.001){ LB.s=1; LB.x=0; LB.y=0; } else { LB.x=px-cx-ns*qx; LB.y=py-cy-ns*qy; }
+  lbClamp(); lbApply(anim);
+}
+(function lbInit(){
+  const lb=$('#lb');
+  $('#lbClose').innerHTML=ic('x'); $('#lbReset').innerHTML=ic('undo'); $('#lbRot').innerHTML=ic('rotate');
+  lb.querySelector('.lb-nav.pv').innerHTML=ic('left'); lb.querySelector('.lb-nav.nx').innerHTML=ic('right');
+  const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y), mid=(a,b)=>({ x:(a.x+b.x)/2, y:(a.y+b.y)/2 });
+  lb.addEventListener('pointerdown', e=>{
+    if(e.target.closest('button')) return;
+    try{ lb.setPointerCapture(e.pointerId); }catch(x){}
+    LB.pts.set(e.pointerId,{ x:e.clientX, y:e.clientY });
+    LB.lastType=e.pointerType||'mouse';
+    if(LB.pts.size===1){ LB.pinchUsed=false; LB.down={ x:e.clientX, y:e.clientY, t:Date.now(), onImg:e.target===$('#lbImg'), type:LB.lastType }; LB.moved=false; }
+    if(LB.pts.size===2){ LB.pinchUsed=true; const [a,b]=[...LB.pts.values()]; LB.pinch={ d:dist(a,b)||1, s:LB.s, m:mid(a,b) }; LB.moved=true; }
+  });
+  lb.addEventListener('pointermove', e=>{
+    const prev=LB.pts.get(e.pointerId); if(!prev) return;
+    const cur={ x:e.clientX, y:e.clientY }; LB.pts.set(e.pointerId,cur);
+    if(LB.pts.size>=2 && LB.pinch){
+      const [a,b]=[...LB.pts.values()], m=mid(a,b);
+      lbZoomAt(m.x,m.y,LB.pinch.s*dist(a,b)/LB.pinch.d);
+      if(LB.s>1){ LB.x+=m.x-LB.pinch.m.x; LB.y+=m.y-LB.pinch.m.y; lbClamp(); lbApply(); }
+      LB.pinch.m=m;
+    }else if(LB.pts.size===1){
+      if(LB.down && Math.hypot(cur.x-LB.down.x,cur.y-LB.down.y)>8) LB.moved=true;
+      if(LB.s>1){ LB.x+=cur.x-prev.x; LB.y+=cur.y-prev.y; lbClamp(); lbApply(); }
+    }
+  });
+  const end=e=>{
+    if(!LB.pts.has(e.pointerId)) return;
+    LB.pts.delete(e.pointerId);
+    if(LB.pts.size<2) LB.pinch=null;
+    if(!LB.pts.size && e.type!=='pointercancel' && LB.down && !LB.pinchUsed && LB.s<=1.01 && LB.list.length>1){   // ปัดซ้าย-ขวา
+      const dx=e.clientX-LB.down.x, dy=e.clientY-LB.down.y;
+      if(Math.abs(dx)>60 && Math.abs(dy)<Math.abs(dx)*.7 && Date.now()-LB.down.t<900){ LB.down=null; lbGo(dx<0?1:-1); return; }
+    }
+    const isMouse=LB.down && LB.down.type==='mouse';
+    if(LB.pts.size || e.type==='pointercancel' || LB.moved || !LB.down || Date.now()-LB.down.t>(isMouse?800:350)) return;
+    if(isMouse){                                     // คอม: คลิกรูป = ซูม, คลิกพื้นที่ว่าง = ปิด
+      if(e.button>0) return;
+      LB.zPrev=LB.zClick; LB.zClick=false;
+      if(LB.down.onImg){ if(LB.s<=1.01){ lbZoomAt(e.clientX,e.clientY,2.5,true); LB.zClick=true; } }
+      else if(LB.s<=1.01) lbClose();
+      return;
+    }
+    const t=Date.now(), p={ x:e.clientX, y:e.clientY };
+    if(t-LB.lastTap<320 && LB.lastXY && Math.hypot(p.x-LB.lastXY.x,p.y-LB.lastXY.y)<40){   // แตะ 2 ครั้ง = ซูม / กลับพอดีจอ
+      clearTimeout(LB.tapT); LB.lastTap=0; lbZoomAt(p.x,p.y,LB.s>1.01?1:2.5,true); return;
+    }
+    LB.lastTap=t; LB.lastXY=p;
+    if(!LB.down.onImg && LB.s<=1.01){ clearTimeout(LB.tapT); LB.tapT=setTimeout(lbClose,330); }
+  };
+  lb.addEventListener('pointerup', end);
+  lb.addEventListener('pointercancel', end);
+  lb.addEventListener('wheel', e=>{
+    e.preventDefault();
+    let d=e.deltaY; if(e.deltaMode===1) d*=16; else if(e.deltaMode===2) d*=innerHeight;
+    d=Math.max(-300,Math.min(300,d));
+    lbZoomAt(e.clientX,e.clientY,LB.s*Math.exp(-d*(e.ctrlKey?.01:.0025)));
+  },{ passive:false });
+  lb.addEventListener('dblclick', e=>{
+    if(LB.lastType!=='mouse' || e.target.closest('button') || LB.zPrev) return;
+    lbZoomAt(e.clientX,e.clientY,LB.s>1.01?1:2.5,true);
+  });
+  lb.addEventListener('click', e=>{
+    const b=e.target.closest('button'); if(!b) return;
+    if(b.id==='lbClose'){ lbClose(); return; }
+    if(b.dataset.nav){ lbGo(+b.dataset.nav); return; }
+    const z=b.dataset.z; if(!z) return;
+    if(z==='rot'){ lbRotate(); return; }
+    lbZoomAt(innerWidth/2,innerHeight/2, z==='in'?LB.s*1.5:z==='out'?LB.s/1.5:1, true);
+  });
+  document.addEventListener('keydown', e=>{
+    if(lb.hidden) return;
+    if(e.key==='Escape') lbClose();
+    else if(e.key==='ArrowRight') lbGo(1);
+    else if(e.key==='ArrowLeft') lbGo(-1);
+    else if(e.key==='+'||e.key==='=') lbZoomAt(innerWidth/2,innerHeight/2,LB.s*1.5,true);
+    else if(e.key==='-') lbZoomAt(innerWidth/2,innerHeight/2,LB.s/1.5,true);
+    else if(e.key==='0') lbZoomAt(innerWidth/2,innerHeight/2,1,true);
+    else if(e.key==='r'||e.key==='R') lbRotate();
+  });
+  document.addEventListener('gesturestart', e=>{ if(!lb.hidden) e.preventDefault(); });
+  addEventListener('resize', ()=>{ if(!lb.hidden){ lbClamp(); lbApply(); } });
+})();
+
+/* ============================================================
+ *  INIT
+ * ============================================================ */
+document.addEventListener('click', e=>{
+  const g=e.target.closest('#snav [data-go], #bnav [data-go], #sfoot [data-go]'); if(g){ go(g.dataset.go,{reset:true}); return; }
+  if(e.target.closest('[data-logout]')) logout();
+});
+$('#btnBack').innerHTML=ic('back');
+$('#btnBack').onclick=goBack;
+(async function init(){
+  try{
+    const d=await run('getInitData');
+    S.lines=d.lines; S.offset=d.serverNow-Date.now(); S.maxPhotos=d.maxPhotos;
+    $('#rLine').innerHTML='<option value="">ทุกไลน์</option>'+d.lines.map(n=>'<option>'+esc(n)+'</option>').join('');
+    drawThumbs(); setInterval(tick,1000);
+    const t=ssGet(TOKEN_KEY);
+    if(t){ try{ const c=await run('checkSupervisor', t); if(c && c.ok) S.token=t; else ssSet(TOKEN_KEY,''); }catch(e){} }
+    $('#boot').remove();
+    addEventListener('popstate', onHistory);
+    qRestore();
+    const ui=loadUI();
+    if(ui && ui.route){                                  // กดรีเฟรช → กลับไปหน้าเดิม
+      if(ui.line && S.lines.includes(ui.line)){
+        S.line=ui.line; S.loginTime=ui.login||fTime.format(now());
+        S.names=loadList('qc_names::'+S.line); S.products=loadList('qc_products::'+S.line);
+        loadDraft();
+        run('getLineMemory', S.line).then(m=>{ if(m.line!==S.line) return; S.names=merge(S.names,m.names); S.products=merge(S.products,m.products); }).catch(()=>{});
+      }
+      if(PERIODS.some(x=>x[0]===ui.period)) S.period=ui.period;
+      if(ui.from) $('#rFrom').value=ui.from;
+      if(ui.to) $('#rTo').value=ui.to;
+      if(ui.rline && S.lines.includes(ui.rline)) $('#rLine').value=ui.rline;
+      S.drill=Array.isArray(ui.drill)?ui.drill:[];
+      S.page=Number(ui.page)||1;
+      S.base=buildBase();
+      S.stack=Array.isArray(ui.stack)?ui.stack.filter(x=>typeof x==='string').slice(-30):[];
+      let r=String(ui.route);
+      if(r==='form' && !S.line) r='op';
+      go(r,{ replace:true });
+    }else{
+      go('op',{ reset:true, replace:true });
+    }
+  }catch(e){
+    $('#bootMsg').innerHTML='<b style="color:var(--red)">โหลดระบบไม่สำเร็จ</b><br>'+esc(errMsg(e))+'<br><br><button class="btn" onclick="location.reload()">ลองใหม่</button>';
+    const sp=$('#bootSpin'); if(sp) sp.remove();
+  }
+})();
+</script>
+</body>
+</html>
