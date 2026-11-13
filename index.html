@@ -43,7 +43,7 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke
 .crumb{font-size:12px;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .top-act{display:flex;gap:6px}
 .iconbtn{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:#fff;display:grid;place-items:center;cursor:pointer;flex:none}
-.bnav{position:fixed;left:0;right:0;bottom:0;z-index:25;background:#fff;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);display:grid;grid-template-columns:repeat(3,1fr);height:var(--bnav-off)}
+.bnav{position:fixed;left:0;right:0;bottom:0;z-index:25;background:#fff;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);display:grid;grid-template-columns:repeat(4,1fr);height:var(--bnav-off)}
 .bnav button{border:none;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:12px;font-weight:600;color:var(--ink-3);cursor:pointer;height:var(--bnav-h);position:relative}
 .bnav button.on{color:var(--red)}
 .bnav svg{width:22px;height:22px}
@@ -459,6 +459,23 @@ button.stat:hover{border-color:var(--red-100);transform:translateY(-1px)}
 
   <!-- Supervisor: รายละเอียด 1 รายการ -->
   <section class="view" id="vDetail" hidden></section>
+
+  <!-- Supervisor: ประวัติเหตุการณ์ (Log) -->
+  <section class="view" id="vLog" hidden>
+    <div class="page">
+      <section class="card noprint">
+        <div class="pbar">
+          <div><div class="fld sm"><span>ช่วงวันที่</span></div>
+            <div class="custom" style="margin-top:0"><input type="date" id="lFrom"><span class="muted">ถึง</span><input type="date" id="lTo">
+            <button class="btn sm dark" type="button" id="lApply">ดู</button></div></div>
+        </div>
+        <div class="fld sm" style="margin-top:12px"><span>ประเภทเหตุการณ์</span></div>
+        <div class="chips" id="lTypes"></div>
+      </section>
+      <div class="range" id="lInfo"></div>
+      <div id="lBody"></div>
+    </div>
+  </section>
 </div>
 
 <nav class="bnav" id="bnav"></nav>
@@ -471,6 +488,9 @@ button.stat:hover{border-color:var(--red-100);transform:translateY(-1px)}
     <div class="muted" style="font-size:13px;margin-bottom:12px">ระบบส่งให้อัตโนมัติ ใช้งานต่อได้เลย — ถ้าปิดแอปก่อนส่งเสร็จ เปิดใหม่ในเครื่อง/เบราว์เซอร์เดิมจะส่งต่อให้</div>
     <div id="qBody"></div>
   </div>
+</div>
+<div class="qov" id="mSheet" hidden>
+  <div class="qsheet" role="dialog" id="mBody"></div>
 </div>
 <div id="toastHost"></div>
 <div class="lb" id="lb" hidden>
@@ -655,6 +675,30 @@ const API={
     (data||[]).forEach(x=>{ if(x && x.path && x.signedUrl && !x.error) out[x.path]=x.signedUrl; });
     return { thumbs:out };
   },
+  async updateRecord(token, id, data, by, reason){
+    await requireSup();
+    const { data:res, error }=await sb.rpc('qc_update_record',{ p_id:id, p_data:data, p_by:by, p_reason:reason });
+    if(error) throw dbErr(error);
+    return res;
+  },
+  async deleteRecord(token, id, by, reason){
+    await requireSup();
+    const { data:res, error }=await sb.rpc('qc_delete_record',{ p_id:id, p_by:by, p_reason:reason });
+    if(error) throw dbErr(error);
+    return res;
+  },
+  async restoreRecord(token, id, by, reason){
+    await requireSup();
+    const { data:res, error }=await sb.rpc('qc_restore_record',{ p_id:id, p_by:by, p_reason:reason });
+    if(error) throw dbErr(error);
+    return res;
+  },
+  async getEventLog(token, from, to){
+    await requireSup();
+    const { data, error }=await sb.rpc('qc_event_log',{ p_from:from, p_to:to });
+    if(error) throw dbErr(error);
+    return data;
+  },
   async getPhoto(token, id){
     await requireSup();
     const { data, error }=await sb.storage.from(BUCKET).createSignedUrl(String(id), SIGN_SECONDS);
@@ -704,7 +748,8 @@ const NAV=[
   { go:'op', icon:'clip', label:'บันทึกรายการ QC', short:'บันทึก' },
   { sec:'QC Supervisor' },
   { go:'dash', icon:'chart', label:'Dashboard', short:'Dashboard', sup:true },
-  { go:'list', icon:'list', label:'รายการละเอียด', short:'รายการ', sup:true }
+  { go:'list', icon:'list', label:'รายการละเอียด', short:'รายการ', sup:true },
+  { go:'log', icon:'clock', label:'ประวัติ (Log)', short:'ประวัติ', sup:true }
 ];
 const ROUTES={
   lines: { view:'vLines', nav:'op', title:'เลือกไลน์ผลิต', crumb:'Operator QC' },
@@ -712,7 +757,8 @@ const ROUTES={
   gate:  { view:'vGate', nav:'dash', title:'เข้าสู่ระบบ Supervisor', crumb:'QC Supervisor' },
   dash:  { view:'vSup', nav:'dash', title:'Dashboard', crumb:'QC Supervisor', sup:true },
   list:  { view:'vSup', nav:'list', title:'รายการละเอียด', crumb:'QC Supervisor', sup:true },
-  detail:{ view:'vDetail', nav:'list', title:'รายละเอียดรายการ', crumb:'QC Supervisor › รายการละเอียด', sup:true }
+  detail:{ view:'vDetail', nav:'list', title:'รายละเอียดรายการ', crumb:'QC Supervisor › รายการละเอียด', sup:true },
+  log:   { view:'vLog', nav:'log', title:'ประวัติเหตุการณ์ (Log)', crumb:'QC Supervisor', sup:true }
 };
 function parseRoute(r){ const i=r.indexOf(':'); return i<0?[r,'']:[r.slice(0,i), r.slice(i+1)]; }
 
@@ -754,7 +800,7 @@ function loadDraft(){
   $('#extra').checked=!!d.extra; $('#wExtra').hidden=!d.extra;
 }
 /** หน้าที่ "ย้อนกลับ" จะไป เมื่อไม่มีประวัติการกด (เช่น เพิ่งเปิดแอป / กดจากเมนู) */
-const PARENT={ form:'lines', gate:'op', dash:'op', list:'dash', detail:'list' };
+const PARENT={ form:'lines', gate:'op', dash:'op', list:'dash', detail:'list', log:'dash' };
 function canBack(){
   const [n]=parseRoute(S.route);
   return S.stack.length>0 || ((n==='dash'||n==='list') && S.drill.length>0) || !!PARENT[n];
@@ -802,7 +848,7 @@ function render(){
   $('#topAct').innerHTML='';
   setNav(R.nav);
   window.scrollTo(0,0);
-  ({ lines:renderLines, form:renderForm, gate:renderGate, dash:renderSup, list:renderSup, detail:renderDetail }[name]||renderLines)(arg, name);
+  ({ lines:renderLines, form:renderForm, gate:renderGate, dash:renderSup, list:renderSup, detail:renderDetail, log:renderLog }[name]||renderLines)(arg, name);
 }
 function setNav(key){
   $('#snav').innerHTML=NAV.map(n=>n.sec?'<div class="sec">'+esc(n.sec)+'</div>':
@@ -812,7 +858,7 @@ function setNav(key){
     ? '<div class="who">'+ic('shield')+'<div><div style="font-weight:600">QC Supervisor</div><div style="font-size:11.5px;color:#A9A4B3">เข้าสู่ระบบแล้ว</div></div></div><button class="btn sm" type="button" data-logout>'+ic('logout')+'ออกจากระบบ</button>'
     : '<button class="btn sm" type="button" data-go="dash">'+ic('lock')+'เข้าสู่ระบบ Supervisor</button>';
 }
-function setToken(t){ S.token=t||''; ssSet(TOKEN_KEY, S.token); if(!S.token){ S.res=null; S.cache={}; } }
+function setToken(t){ S.token=t||''; ssSet(TOKEN_KEY, S.token); if(!S.token){ S.res=null; S.cache={}; LOG.data=null; } }
 async function logout(){
   const t=S.token; setToken('');
   try{ await run('supervisorLogout', t); }catch(e){}
@@ -1381,7 +1427,8 @@ addEventListener('resize', ()=>{ clearTimeout(rz); rz=setTimeout(()=>{ if(S.rout
  *  SUPERVISOR: รายการละเอียด
  * ============================================================ */
 function rowBadges(r){
-  return (r.extraSample?'<span class="badge b-violet">สุ่มเพิ่ม</span>':'')+
+  return (r.updatedBy?'<span class="badge b-gray">แก้ไขแล้ว</span>':'')+
+    (r.extraSample?'<span class="badge b-violet">สุ่มเพิ่ม</span>':'')+
     (r.action.trim()?'':'<span class="badge b-hold">ยังไม่ระบุการแก้ไข</span>')+
     (r.fileIds.length?'<span class="badge b-blue">'+ic('camera').replace('class="i"','class="i" style="width:13px;height:13px"')+r.fileIds.length+'</span>':'');
 }
@@ -1454,16 +1501,181 @@ function renderDetail(arg){
     '<section class="card" style="margin-top:14px"><div class="card-h"><h3>'+ic('camera')+'รูปถ่าย Defect <span class="muted" style="font-weight:500">('+r.fileIds.length+')</span></h3>'+(r.fileIds.length?'<span class="sub">แตะเพื่อดูรูปใหญ่ · ซูมได้</span>':'')+'</div>'+
       (r.fileIds.length?'<div class="ph-grid" id="dPhotos">'+r.fileIds.map(id=>thumbBox(id,'pth')).join('')+'</div>':'<div class="muted">ไม่มีรูปแนบ</div>')+'</section>'+
     (chips.length?'<section class="card"><div class="card-h"><h3>'+ic('chart')+'เจาะลึกต่อจากรายการนี้</h3></div><div class="dchips" id="dChips">'+chips.join('')+'</div></section>':'')+
+    '<section class="card noprint"><div class="card-h"><h3>'+ic('wrench')+'จัดการรายการ</h3>'+
+      (r.updatedBy?'<span class="sub">แก้ไขล่าสุด '+esc(r.updatedAt)+' โดย '+esc(r.updatedBy)+'</span>':'')+'</div>'+
+      '<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" type="button" data-edit>'+ic('wrench')+'แก้ไขข้อมูล</button>'+
+      '<button class="btn" type="button" data-del style="color:var(--red);border-color:var(--red-100)">'+ic('x')+'ลบรายการ</button></div></section>'+
     '<div class="dnav"><button class="btn" type="button" data-nav="-1"'+(i<=0?' disabled':'')+'>'+ic('left')+'ก่อนหน้า</button><span class="muted">'+(i+1)+' / '+rows.length+'</span><button class="btn" type="button" data-nav="1"'+(i>=rows.length-1?' disabled':'')+'>ถัดไป'+ic('right')+'</button></div>'+
   '</div>';
   observeThumbs(v);
   v.onclick=e=>{
+    if(e.target.closest('[data-edit]')){ editRecord(r); return; }
+    if(e.target.closest('[data-del]')){ deleteRecord(r); return; }
     const th=e.target.closest('[data-th]'); if(th){ photoBox(r.fileIds, r.fileIds.indexOf(th.dataset.th)); return; }
     const n=e.target.closest('[data-nav]'); if(n){ const t=rows[i+ +n.dataset.nav]; if(!n.disabled && t) go('detail:'+t.id,{replace:true}); return; }
     const c=e.target.closest('#dChips [data-k]');
     if(c){ let val=c.dataset.v; if(c.dataset.k==='hour') val=+val; go('dash',{reset:true}); drill(c.dataset.k, val, c.dataset.l); }
   };
 }
+
+/* ============================================================
+ *  SUPERVISOR: แก้ไข / ลบ (บันทึกชื่อ + เหตุผลลงประวัติทุกครั้ง)
+ * ============================================================ */
+function openModal(html){ $('#mBody').innerHTML=html; $('#mSheet').hidden=false; document.body.classList.add('lock'); }
+function closeModal(){ $('#mSheet').hidden=true; $('#mBody').innerHTML=''; document.body.classList.remove('lock'); }
+$('#mSheet').addEventListener('click', e=>{ if(e.target===$('#mSheet') || e.target.closest('[data-mclose]')) closeModal(); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape' && !$('#mSheet').hidden) closeModal(); });
+$('#mSheet').addEventListener('input', e=>{ const f=e.target.closest('.fld'); if(f) f.classList.remove('err'); });
+
+function modalHead(title, r){
+  return '<div class="qhead"><h3>'+esc(title)+'</h3><button class="iconbtn" type="button" data-mclose aria-label="ปิด">×</button></div>'+
+    '<div class="muted" style="font-size:13px;margin:4px 0 14px">'+esc(r.id)+' · '+esc(r.line)+' · '+esc(thDate(r.date))+' '+esc(r.time.slice(0,5))+'</div>';
+}
+function whoFields(kind){
+  return '<div style="border-top:1px dashed var(--line);margin:4px 0 12px"></div>'+
+    '<label class="fld"><span>ชื่อผู้'+kind+' <b>*</b></span><input id="mBy" maxlength="60" autocomplete="off" placeholder="ชื่อ Supervisor"></label>'+
+    '<label class="fld"><span>เหตุผล <b>*</b></span><textarea id="mReason" maxlength="500" placeholder="เช่น กรอกไลน์ผิด, พิมพ์ชื่อ Product ผิด, บันทึกซ้ำ"></textarea></label>';
+}
+function needM(id){ const el=$('#'+id), ok=el.value.trim()!==''; el.closest('.fld').classList.toggle('err',!ok); return ok; }
+async function reloadSup(){
+  S.cache={}; LOG.data=null;
+  const f=effFilter(), res=await supCall('getSupervisorData', f);
+  S.cache[JSON.stringify(f)]=res; S.res=res;
+}
+async function modalSubmit(btn, work){
+  btn.disabled=true;
+  try{ await work(); }
+  catch(e){ const m=errMsg(e); if(m==='SESSION_EXPIRED') closeModal(); else toast(m,'err'); }
+  finally{ btn.disabled=false; }
+}
+
+function editRecord(r){
+  const lines=S.lines.includes(r.line)?S.lines:[r.line].concat(S.lines);
+  openModal(modalHead('แก้ไขข้อมูลรายการ', r)+
+    '<label class="fld"><span>ไลน์ผลิต <b>*</b></span><select id="eLine">'+lines.map(n=>'<option'+(n===r.line?' selected':'')+'>'+esc(n)+'</option>').join('')+'</select></label>'+
+    '<label class="fld"><span>ชื่อผู้รายงาน <b>*</b></span><input id="eReporter" maxlength="60"></label>'+
+    '<label class="fld"><span>Product <b>*</b></span><input id="eProduct" maxlength="100"></label>'+
+    '<label class="fld"><span>หมายเหตุ / ปัญหาที่พบ <b>*</b></span><textarea id="eProblem" maxlength="1000"></textarea></label>'+
+    '<label class="fld"><span>การแก้ไข</span><textarea id="eAction" maxlength="1000"></textarea></label>'+
+    '<label class="check"><input type="checkbox" id="eExtra"> สุ่มเพิ่ม</label>'+
+    '<label class="fld" id="eExtraW" style="margin:12px 0 0"><span>ผลการสุ่มเพิ่ม <b>*</b></span><textarea id="eExtraNote" maxlength="1000"></textarea></label>'+
+    '<div style="height:12px"></div>'+whoFields('แก้ไข')+
+    '<button class="btn primary block lg" type="button" id="eSave">'+ic('save')+'บันทึกการแก้ไข</button>');
+  $('#eReporter').value=r.reporter; $('#eProduct').value=r.product; $('#eProblem').value=r.problem;
+  $('#eAction').value=r.action; $('#eExtra').checked=r.extraSample; $('#eExtraNote').value=r.extraNote;
+  $('#eExtraW').hidden=!r.extraSample;
+  $('#mBy').value=lsGet('qc_editor');
+  $('#eExtra').onchange=function(){ $('#eExtraW').hidden=!this.checked; };
+  $('#eSave').onclick=function(){
+    const extra=$('#eExtra').checked;
+    const ok=[needM('eReporter'), needM('eProduct'), needM('eProblem'), !extra||needM('eExtraNote'), needM('mBy'), needM('mReason')].every(Boolean);
+    if(!ok){ toast('กรุณากรอกช่องที่มี * ให้ครบ','err'); return; }
+    const data={ line:$('#eLine').value, reporter:$('#eReporter').value.trim(), product:$('#eProduct').value.trim(),
+      problem:$('#eProblem').value.trim(), action:$('#eAction').value.trim(), extraSample:extra, extraNote:extra?$('#eExtraNote').value.trim():'' };
+    const by=$('#mBy').value.trim(), reason=$('#mReason').value.trim();
+    modalSubmit(this, async()=>{
+      await supCall('updateRecord', r.id, data, by, reason);
+      lsSet('qc_editor', by);
+      closeModal(); toast('แก้ไขรายการแล้ว','ok');
+      await reloadSup();
+      if(S.res.rows.some(x=>x.id===r.id)) go('detail:'+r.id,{replace:true});
+      else go('list',{replace:true});                 // แก้แล้วไม่อยู่ในตัวกรองเดิม (เช่น เปลี่ยนไลน์)
+    });
+  };
+}
+
+function deleteRecord(r){
+  openModal(modalHead('ลบรายการ', r)+
+    '<div class="card" style="background:var(--red-50);border-color:var(--red-100);box-shadow:none;font-size:13.5px">'+
+      '<b>'+esc(r.product)+'</b><div style="margin-top:4px;white-space:pre-line">'+esc(r.problem)+'</div>'+
+      '<div style="margin-top:8px;color:var(--ink-2)">รายการจะถูกซ่อนจาก Dashboard และรายการละเอียด แต่ข้อมูลเดิมยังเก็บไว้ในประวัติ (กู้คืนได้)</div></div>'+
+    whoFields('ลบ')+
+    '<button class="btn primary block lg" type="button" id="dConfirm">'+ic('x')+'ยืนยันลบรายการ</button>');
+  $('#mBy').value=lsGet('qc_editor');
+  $('#dConfirm').onclick=function(){
+    if(![needM('mBy'), needM('mReason')].every(Boolean)){ toast('กรุณากรอกชื่อและเหตุผล','err'); return; }
+    const by=$('#mBy').value.trim(), reason=$('#mReason').value.trim();
+    modalSubmit(this, async()=>{
+      await supCall('deleteRecord', r.id, by, reason);
+      lsSet('qc_editor', by);
+      closeModal(); toast('ลบรายการแล้ว','ok');
+      await reloadSup();
+      go('list',{replace:true});
+    });
+  };
+}
+
+/* ============================================================
+ *  SUPERVISOR: ประวัติเหตุการณ์ (Log)
+ * ============================================================ */
+const EV_TYPES=[['all','ทั้งหมด'],['create','บันทึกใหม่'],['update','แก้ไข'],['delete','ลบ'],['restore','กู้คืน']];
+const EV_BADGE={ create:'b-blue', update:'b-hold', delete:'b-red', restore:'b-pass' };
+const EV_ICON={ create:'clip', update:'wrench', delete:'x', restore:'undo' };
+const FIELD_LABEL={ line:'ไลน์ผลิต', reporter:'ผู้รายงาน', product:'Product', problem:'ปัญหาที่พบ', action:'การแก้ไข', extra_sample:'สุ่มเพิ่ม', extra_note:'ผลการสุ่มเพิ่ม' };
+const LOG={ type:'all', data:null, req:0 };
+function fmtVal(v){ if(v===true) return 'ใช่'; if(v===false) return 'ไม่'; v=v==null?'':String(v); return v===''?'(ว่าง)':v; }
+
+function renderLog(){
+  $('#topAct').innerHTML='<button class="btn sm" type="button" id="aRefresh">'+ic('refresh')+'<span class="hide-sm">รีเฟรช</span></button>';
+  $('#aRefresh').onclick=fetchLog;
+  if(!$('#lTo').value){ const t=isoDate(now()); $('#lTo').value=t; $('#lFrom').value=addDays(t,-6); }
+  if(LOG.data) drawLog(); else fetchLog();
+}
+async function fetchLog(){
+  const from=$('#lFrom').value, to=$('#lTo').value, my=++LOG.req;
+  if(!from||!to){ toast('กรุณาเลือกวันที่','err'); return; }
+  if(from>to){ toast('วันที่เริ่มต้นต้องไม่เกินวันที่สิ้นสุด','err'); return; }
+  $('#lBody').innerHTML=spinner('กำลังโหลดประวัติ…');
+  try{
+    const d=await supCall('getEventLog', from, to);
+    if(my===LOG.req){ LOG.data=d; drawLog(); }
+  }catch(e){ if(errMsg(e)!=='SESSION_EXPIRED'){ toast(errMsg(e),'err'); $('#lBody').innerHTML='<div class="card"><div class="empty">โหลดประวัติไม่สำเร็จ</div></div>'; } }
+}
+function drawLog(){
+  const d=LOG.data; if(!d) return;
+  const ev=d.events||[], cnt={ all:ev.length };
+  ev.forEach(x=>{ cnt[x.type]=(cnt[x.type]||0)+1; });
+  $('#lTypes').innerHTML=EV_TYPES.map(t=>'<button type="button" class="chip'+(LOG.type===t[0]?' on':'')+'" data-t="'+t[0]+'">'+t[1]+' '+(cnt[t[0]]||0)+'</button>').join('');
+  const list=LOG.type==='all'?ev:ev.filter(x=>x.type===LOG.type);
+  $('#lInfo').textContent='ช่วงข้อมูล: '+thDate($('#lFrom').value)+' – '+thDate($('#lTo').value)+' · '+d.total+' เหตุการณ์'+(d.total>ev.length?' (แสดง '+ev.length+' ล่าสุด — เลือกช่วงวันที่ให้แคบลงเพื่อดูทั้งหมด)':'');
+  if(!list.length){ $('#lBody').innerHTML='<div class="card"><div class="empty">ไม่พบเหตุการณ์ในช่วงนี้</div></div>'; return; }
+  $('#lBody').innerHTML='<div class="ilist">'+list.map(x=>{
+    const label=(EV_TYPES.find(t=>t[0]===x.type)||[,x.type])[1];
+    const changes=(x.changes||[]).map(c=>'<div style="font-size:13px;margin-top:4px"><span class="muted">'+esc(FIELD_LABEL[c.field]||c.field)+':</span> <s style="color:var(--ink-3)">'+esc(fmtVal(c.from))+'</s> → <b>'+esc(fmtVal(c.to))+'</b></div>').join('');
+    const canRestore=x.type==='delete' && x.isDeleted;
+    return '<div class="item" style="cursor:default">'+
+      '<div class="t"><div style="min-width:0"><span class="badge '+(EV_BADGE[x.type]||'b-gray')+'">'+ic(EV_ICON[x.type]||'clock').replace('class="i"','class="i" style="width:13px;height:13px"')+esc(label)+'</span>'+
+        '<div class="p" style="margin-top:6px">'+esc(x.product||'-')+'</div></div><span class="id mono" style="white-space:nowrap">'+esc(x.at)+'</span></div>'+
+      '<div class="id">'+esc(x.recordId)+' · '+esc(x.line||'-')+(x.isDeleted&&x.type!=='delete'?' · <span style="color:var(--red)">ปัจจุบันถูกลบอยู่</span>':'')+'</div>'+
+      '<div class="m"><span>'+(x.type==='create'?'ผู้รายงาน':'โดย')+': '+esc(x.by||'-')+'</span>'+(x.reason?'<span>เหตุผล: '+esc(x.reason)+'</span>':'')+'</div>'+
+      (changes?'<div style="margin-top:6px;padding:8px 10px;background:#FAF8F4;border-radius:10px">'+changes+'</div>':'')+
+      (canRestore?'<div style="margin-top:10px"><button class="btn sm" type="button" data-restore="'+esc(x.recordId)+'" data-name="'+esc(x.product||'')+'">'+ic('undo')+'กู้คืนรายการนี้</button></div>':'')+
+    '</div>';
+  }).join('')+'</div>';
+}
+$('#lApply').onclick=fetchLog;
+$('#lTypes').addEventListener('click', e=>{ const b=e.target.closest('[data-t]'); if(!b) return; LOG.type=b.dataset.t; drawLog(); });
+$('#lBody').addEventListener('click', e=>{
+  const b=e.target.closest('[data-restore]'); if(!b) return;
+  const id=b.dataset.restore, name=b.dataset.name;
+  openModal('<div class="qhead"><h3>กู้คืนรายการ</h3><button class="iconbtn" type="button" data-mclose aria-label="ปิด">×</button></div>'+
+    '<div class="muted" style="font-size:13px;margin:4px 0 14px">'+esc(id)+' · '+esc(name)+'</div>'+
+    '<div style="font-size:13.5px;color:var(--ink-2);margin-bottom:8px">รายการจะกลับมาแสดงใน Dashboard และรายการละเอียดตามเดิม</div>'+
+    whoFields('กู้คืน')+
+    '<button class="btn primary block lg" type="button" id="rConfirm">'+ic('undo')+'ยืนยันกู้คืน</button>');
+  $('#mBy').value=lsGet('qc_editor');
+  $('#rConfirm').onclick=function(){
+    if(![needM('mBy'), needM('mReason')].every(Boolean)){ toast('กรุณากรอกชื่อและเหตุผล','err'); return; }
+    const by=$('#mBy').value.trim(), reason=$('#mReason').value.trim();
+    modalSubmit(this, async()=>{
+      await supCall('restoreRecord', id, by, reason);
+      lsSet('qc_editor', by);
+      closeModal(); toast('กู้คืนรายการแล้ว','ok');
+      S.cache={}; S.res=null;                 // Dashboard โหลดใหม่เมื่อเปิด
+      fetchLog();
+    });
+  };
+});
 
 /* ============================================================
  *  รูปย่อ (โหลดจาก Server เมื่อเลื่อนมาเห็น) + รูปเต็ม
